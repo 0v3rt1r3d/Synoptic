@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 apply from: "$project.rootDir/keystore/secret.gradle"
 apply from: "$project.rootDir/tools/version.gradle"
 
@@ -14,6 +15,11 @@ android {
         vectorDrawables.useSupportLibrary = true
         buildConfigField 'String', 'API_KEY', "\"${apiKeyWeather}\""
         buildConfigField 'String', 'API_KEY_PLACES', "\"${apiKeyPlaces}\""
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     configurations.all {

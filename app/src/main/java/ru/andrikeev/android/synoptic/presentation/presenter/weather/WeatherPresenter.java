@@ -73,6 +73,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
         repository.fetchWeather();
     }
 
+    //todo: why this method is not used?
     public void fetchWeather(double lon, double lat){
         getViewState().showLoading();
         repository.fetchWeather(lon, lat);
@@ -82,5 +83,13 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         loadWeather();
+    }
+
+    public void fetchDailyForecast(){
+        repository.fetchDailyForecast();
+    }
+
+    public void fetchForecast(){
+        repository.fetchForecast();
     }
 }

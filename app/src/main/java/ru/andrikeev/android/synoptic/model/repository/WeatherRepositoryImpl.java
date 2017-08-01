@@ -9,12 +9,15 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.ModelsConverter;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.network.RemoteService;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.ForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
 import ru.andrikeev.android.synoptic.model.persistence.CacheService;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import timber.log.Timber;
@@ -61,15 +64,12 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public Observable<Resource<WeatherModel>> loadWeather() {
         return cacheService.getWeather(settings.getCityId())
                 .onErrorResumeNext(loadRemoteAndSave(settings.getCityId()))
-                .map(new Function<Weather, Resource<WeatherModel>>() {
-                    @Override
-                    public Resource<WeatherModel> apply(@NonNull Weather weather) throws Exception {
-                        if (shouldFetchWeather(weather)) {
-                            fetchWeather();
-                            return Resource.fetching(converter.toViewModel(weather));
-                        } else {
-                            return Resource.success(converter.toViewModel(weather));
-                        }
+                .map(weather -> {
+                    if (shouldFetchWeather(weather)) {
+                        fetchWeather();
+                        return Resource.fetching(converter.toViewModel(weather));
+                    } else {
+                        return Resource.success(converter.toViewModel(weather));
                     }
                 })
                 .toObservable()
@@ -80,29 +80,23 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     @NonNull
     private Single<Weather> loadRemoteAndSave(long cityId) {
         return remoteService.getWeather(cityId)
-                .map(new Function<WeatherResponse, Weather>() {
-                    @Override
-                    public Weather apply(@NonNull WeatherResponse weatherResponse) throws Exception {
-                        Timber.d("Weather loaded from api: %s", weatherResponse);
-                        Weather weather = converter.toCacheModel(weatherResponse);
-                        cacheService.cacheWeather(weather);
-                        return weather;
-                    }
+                .map(weatherResponse -> {
+                    Timber.d("Weather loaded from api: %s", weatherResponse);
+                    Weather weather = converter.toCacheModel(weatherResponse);
+                    cacheService.cacheWeather(weather);
+                    return weather;
                 });
     }
 
     @NonNull
     private Single<Weather> loadRemoteAndSave(double lon, double lat) {
         return remoteService.getWeather(lat, lon)
-                .map(new Function<WeatherResponse, Weather>() {
-                    @Override
-                    public Weather apply(@NonNull WeatherResponse weatherResponse) throws Exception {
-                        Timber.d("Weather loaded from api: %s", weatherResponse);
-                        Weather weather = converter.toCacheModel(weatherResponse);
-                        settings.setCityId(weather.getCityId());
-                        cacheService.cacheWeather(weather);
-                        return weather;
-                    }
+                .map(weatherResponse -> {
+                    Timber.d("Weather loaded from api: %s", weatherResponse);
+                    Weather weather = converter.toCacheModel(weatherResponse);
+                    settings.setCityId(weather.getCityId());
+                    cacheService.cacheWeather(weather);
+                    return weather;
                 });
     }
 
@@ -126,19 +120,31 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     public void fetchWeather(double lon, double lat) {
         loadRemoteAndSave(lon, lat)
-                .subscribe(new Consumer<Weather>() {
-                               @Override
-                               public void accept(@NonNull Weather weather) throws Exception {
-                                   Timber.d("Weather fetched: %s", weather);
-                                   subject.onNext(Resource.success(converter.toViewModel(weather)));
-                               }
-                           },
-                        new Consumer<Throwable>() {
-                            @Override
-                            public void accept(@NonNull Throwable throwable) throws Exception {
-                                Timber.e(throwable, "Error fetching weather");
-                                subject.onNext(Resource.<WeatherModel>error(throwable));
-                            }
+                .subscribe(weather -> {
+                            Timber.d("Weather fetched: %s", weather);
+                            subject.onNext(Resource.success(converter.toViewModel(weather)));
+                        },
+                        throwable -> {
+                            Timber.e(throwable, "Error fetching weather");
+                            subject.onNext(Resource.error(throwable));
                         });
+    }
+
+    @Override
+    public void fetchDailyForecast() {
+        remoteService.getDailyForecast(524901, 5)
+                .subscribeOn(Schedulers.io())
+                .subscribe((DailyForecastResponse response) ->
+                                Timber.d("DailyForecast loaded"),
+                        Throwable::printStackTrace);
+    }
+
+    @Override
+    public void fetchForecast() {
+        remoteService.getForecast(524901)
+                .subscribeOn(Schedulers.io())
+                .subscribe(forecastResponse ->
+                                Timber.d("Forecast loaded"),
+                        Throwable::printStackTrace);
     }
 }

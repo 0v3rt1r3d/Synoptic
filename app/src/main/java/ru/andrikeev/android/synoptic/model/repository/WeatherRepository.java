@@ -21,4 +21,6 @@ public interface WeatherRepository {
      */
     void fetchWeather();
     void fetchWeather(double lon, double lat);
+    void fetchDailyForecast();
+    void fetchForecast();
 }

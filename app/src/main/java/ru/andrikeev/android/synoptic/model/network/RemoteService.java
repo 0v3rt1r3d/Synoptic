@@ -1,7 +1,9 @@
 package ru.andrikeev.android.synoptic.model.network;
 
 import io.reactivex.Single;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.ForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
 
 /**
  * Interface for remote (network) service.
@@ -16,4 +18,6 @@ public interface RemoteService {
      */
     Single<WeatherResponse> getWeather(long cityId);
     Single<WeatherResponse> getWeather(double lat,double lon);
+    Single<ForecastResponse> getForecast(long cityId);
+    Single<DailyForecastResponse> getDailyForecast(long cityId, int days);
 }

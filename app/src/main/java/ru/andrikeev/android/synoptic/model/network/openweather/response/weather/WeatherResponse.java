@@ -1,13 +1,13 @@
-package ru.andrikeev.android.synoptic.model.network.openweather.response;
+package ru.andrikeev.android.synoptic.model.network.openweather.response.weather;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import ru.andrikeev.android.synoptic.model.network.openweather.response.current.Clouds;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.current.WeatherCondition;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.current.WeatherDescription;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.current.Wind;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.common.Clouds;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.common.WeatherCondition;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.common.WeatherDescription;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.common.Wind;
 
 /**
  * Weather model from response.

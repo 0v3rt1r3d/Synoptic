@@ -15,9 +15,8 @@ import ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesServ
 import ru.andrikeev.android.synoptic.model.network.googleplaces.ResponceConverter;
 import ru.andrikeev.android.synoptic.model.network.googleplaces.places.Location;
 import ru.andrikeev.android.synoptic.model.network.googleplaces.places.PlacesResponse;
-import ru.andrikeev.android.synoptic.model.network.googleplaces.suggestions.SuggestionsResponse;
 import ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherService;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import timber.log.Timber;
 
@@ -42,12 +41,7 @@ public class CityResolver {
     public Single<List<SuggestionModel>> loadPredictions(@NonNull String input){
         return placesService.loadPredictions(input)
                 .subscribeOn(Schedulers.io())
-                .map(new Function<SuggestionsResponse, List<SuggestionModel>>() {
-                    @Override
-                    public List<SuggestionModel> apply(@NonNull SuggestionsResponse suggestionsResponse) throws Exception {
-                        return ResponceConverter.toViewModel(suggestionsResponse);
-                    }
-                });
+                .map(ResponceConverter::toViewModel);
     }
 
     public Single<Long> loadCityId(String placeId){

@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import ru.andrikeev.android.synoptic.utils.DateUtils;
 import ru.andrikeev.android.synoptic.utils.UnitsUtils;

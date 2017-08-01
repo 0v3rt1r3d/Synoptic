@@ -3,7 +3,7 @@ package ru.andrikeev.android.synoptic.model;
 import android.support.annotation.NonNull;
 
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 
 /**

@@ -79,6 +79,12 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
             }
         });
 
+        //todo:remove the listener
+        weatherIcon.setOnClickListener((View v)->{
+            presenter.fetchForecast();
+            presenter.fetchDailyForecast();
+        });
+
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
