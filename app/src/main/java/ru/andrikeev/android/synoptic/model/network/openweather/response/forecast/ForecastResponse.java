@@ -14,6 +14,9 @@ public class ForecastResponse {
     @SerializedName("city")
     private City city;
 
+    @SerializedName("message")
+    private float message;
+
     @SerializedName("list")
     private List<Forecast> forecastsList;
 
@@ -23,5 +26,9 @@ public class ForecastResponse {
 
     public List<Forecast> getForecastsList() {
         return forecastsList;
+    }
+
+    public float getMessage() {
+        return message;
     }
 }

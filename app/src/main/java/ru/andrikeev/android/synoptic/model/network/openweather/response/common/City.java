@@ -2,8 +2,6 @@ package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
 import com.google.gson.annotations.SerializedName;
 
-import ru.andrikeev.android.synoptic.model.network.openweather.response.common.Coord;
-
 /**
  * Created by overtired on 01.08.17.
  */
@@ -15,6 +13,8 @@ public class City {
     @SerializedName("id")
     private int id;
 
+
+    //todo: does the field used?
     @SerializedName("coord")
     private Coord coord;
 

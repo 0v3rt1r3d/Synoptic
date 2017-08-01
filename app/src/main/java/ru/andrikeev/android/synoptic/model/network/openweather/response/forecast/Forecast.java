@@ -29,6 +29,7 @@ public class Forecast {
     @SerializedName("main")
     private WeatherCondition condition;
 
+
     public WeatherCondition getCondition() {
         return condition;
     }

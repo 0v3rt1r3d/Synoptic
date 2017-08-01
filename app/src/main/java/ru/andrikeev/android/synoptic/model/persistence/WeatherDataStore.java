@@ -36,12 +36,9 @@ public class WeatherDataStore implements CacheService {
                 .observable()
                 .subscribeOn(Schedulers.io())
                 .singleOrError()
-                .map(new Function<WeatherEntity, Weather>() {
-                    @Override
-                    public Weather apply(@NonNull WeatherEntity weatherEntity) throws Exception {
-                        Timber.d("Weather restored from cache: %s", weatherEntity);
-                        return new Weather(weatherEntity);
-                    }
+                .map(weatherEntity -> {
+                    Timber.d("Weather restored from cache: %s", weatherEntity);
+                    return new Weather(weatherEntity);
                 });
     }
 
@@ -63,18 +60,8 @@ public class WeatherDataStore implements CacheService {
                     }
                 })
                 .subscribe(
-                        new Consumer<WeatherEntity>() {
-                            @Override
-                            public void accept(@NonNull WeatherEntity weatherEntity) throws Exception {
-                                Timber.d("Weather cached: %s", weatherEntity);
-                            }
-                        },
-                        new Consumer<Throwable>() {
-                            @Override
-                            public void accept(@NonNull Throwable throwable) throws Exception {
-                                Timber.e(throwable, "Error caching weather");
-                            }
-                        }
+                        weatherEntity -> Timber.d("Weather cached: %s", weatherEntity),
+                        throwable -> Timber.e(throwable, "Error caching weather")
                 );
     }
 

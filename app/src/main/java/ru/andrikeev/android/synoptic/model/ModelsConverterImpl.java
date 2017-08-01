@@ -3,7 +3,9 @@ package ru.andrikeev.android.synoptic.model;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -11,8 +13,14 @@ import javax.inject.Singleton;
 
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.application.Settings;
+import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.ForecastResponse;
 import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.persistence.DailyForecast;
+import ru.andrikeev.android.synoptic.model.persistence.Forecast;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import ru.andrikeev.android.synoptic.utils.DateUtils;
 import ru.andrikeev.android.synoptic.utils.UnitsUtils;
@@ -153,4 +161,74 @@ public class ModelsConverterImpl implements ModelsConverter {
                 weatherResponse.getClouds().getPercents());
     }
 
+    @Override
+    public List<DailyForecast> toDailyForecastCacheModel(@NonNull DailyForecastResponse forecastResponse) {
+        List<DailyForecast> result = new ArrayList<>();
+
+        int cityId = forecastResponse.getCity().getId();
+        float message = forecastResponse.getMessage();
+        String cityName = forecastResponse.getCity().getCityName();
+
+        for(ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
+                :forecastResponse.getForecastList()){
+            result.add(new DailyForecast(
+                    message,
+                    cityName,
+                    cityId,
+                    dailyForecast.getDate(),
+                    dailyForecast.getWeather().get(0).getDescription(),
+                    dailyForecast.getClouds(),
+                    dailyForecast.getSpeed(),
+                    dailyForecast.getDegree(),
+                    dailyForecast.getPressure(),
+                    dailyForecast.getHumidity(),
+                    dailyForecast.getTemp().getTempMin(),
+                    dailyForecast.getTemp().getTempMax(),
+                    dailyForecast.getTemp().getTempDay(),
+                    dailyForecast.getTemp().getTempNight(),
+                    dailyForecast.getTemp().getTempMorning(),
+                    dailyForecast.getTemp().getTempEvening()));
+        }
+
+        return result;
+    }
+
+    @Override
+    public DailyForecastModel toDailyForecastViewModel(@NonNull List<DailyForecast> forecast) {
+        return null;
+    }
+
+    @Override
+    public List<Forecast> toForecastCacheModel(@NonNull ForecastResponse forecastResponse) {
+        int cityId = forecastResponse.getCity().getId();
+        float message = forecastResponse.getMessage();
+        String cityName = forecastResponse.getCity().getCityName();
+
+        List<Forecast> list = new ArrayList<>();
+
+        for (ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.Forecast forecast
+                :forecastResponse.getForecastsList()) {
+            list.add(new Forecast(
+                    message,
+                    cityName,
+                    cityId,
+                    forecast.getDate(),
+                    forecast.getWeather().get(0).getDescription(),
+                    forecast.getClouds().getPercents(),
+                    forecast.getWind().getSpeed(),
+                    forecast.getWind().getDegree(),
+                    forecast.getCondition().getTemperature(),
+                    forecast.getCondition().getPressure(),
+                    forecast.getCondition().getHumidity(),
+                    forecast.getCondition().getMinTemperatire(),
+                    forecast.getCondition().getMaxTemperature()));
+        }
+
+        return list;
+    }
+
+    @Override
+    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecast) {
+        return null;
+    }
 }

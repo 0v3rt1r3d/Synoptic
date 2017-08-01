@@ -59,4 +59,12 @@ public class DailyForecast {
     public float getClouds() {
         return clouds;
     }
+
+    public long getDate() {
+        return date;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
 }
