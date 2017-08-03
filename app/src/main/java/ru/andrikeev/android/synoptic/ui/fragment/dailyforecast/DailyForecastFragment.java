@@ -15,6 +15,8 @@ import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
 
 public class DailyForecastFragment extends BaseFragment<DailyForecastView, DailyForecastPresenter>
         implements DailyForecastView{
+    public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.dailyforecast.DailyForecastFragment";
+
     @Inject
     @InjectPresenter
     DailyForecastPresenter presenter;
@@ -27,5 +29,9 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
     @Override
     protected DailyForecastPresenter providePresenter() {
         return presenter;
+    }
+
+    public static DailyForecastFragment create(){
+        return new DailyForecastFragment();
     }
 }

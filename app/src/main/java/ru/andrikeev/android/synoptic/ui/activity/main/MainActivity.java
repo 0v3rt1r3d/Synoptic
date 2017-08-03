@@ -19,6 +19,8 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.ui.activity.BaseActivity;
+import ru.andrikeev.android.synoptic.ui.fragment.dailyforecast.DailyForecastFragment;
+import ru.andrikeev.android.synoptic.ui.fragment.forecast.ForecastFragment;
 import ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment;
 import ru.andrikeev.android.synoptic.utils.IntentHelper;
 
@@ -53,6 +55,7 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
+            navigationView.getMenu().getItem(0).setChecked(true);
             WeatherFragment weatherFragment = WeatherFragment.create();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, weatherFragment)
@@ -72,7 +75,41 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment;
         switch (item.getItemId()) {
+            case R.id.nav_weather:
+                fragment = getSupportFragmentManager()
+                        .findFragmentByTag(WeatherFragment.TAG);
+                if(fragment == null){
+                    fragment = WeatherFragment.create();
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,fragment,WeatherFragment.TAG)
+                        .commitNow();
+                break;
+
+            case R.id.nav_forecast:
+                fragment = getSupportFragmentManager()
+                        .findFragmentByTag(ForecastFragment.TAG);
+                if(fragment == null){
+                    fragment = ForecastFragment.create();
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,fragment,ForecastFragment.TAG)
+                        .commitNow();
+                break;
+
+            case R.id.nav_daily_forecast:
+                fragment = getSupportFragmentManager()
+                        .findFragmentByTag(DailyForecastFragment.TAG);
+                if(fragment == null){
+                    fragment = DailyForecastFragment.create();
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container,fragment,DailyForecastFragment.TAG)
+                        .commitNow();
+                break;
+
             case R.id.nav_settings:
                 IntentHelper.openSettingsActivity(this);
                 return false;

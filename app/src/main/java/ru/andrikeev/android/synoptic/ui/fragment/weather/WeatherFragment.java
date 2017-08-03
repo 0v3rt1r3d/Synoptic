@@ -24,6 +24,8 @@ import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
 
 public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter> implements WeatherView {
 
+    public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment";
+
     //todo: is it used?
     public static final String EXTRA_LON = "extra_lon";
     public static final String EXTRA_LAT = "extra_lat";
