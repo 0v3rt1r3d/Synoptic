@@ -24,6 +24,7 @@ import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
 
 public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter> implements WeatherView {
 
+    //todo: is it used?
     public static final String EXTRA_LON = "extra_lon";
     public static final String EXTRA_LAT = "extra_lat";
 
@@ -71,12 +72,9 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         windDirection = view.findViewById(R.id.windDirection);
         clouds = view.findViewById(R.id.clouds);
 
-        cityName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = CityActivity.getIntent(getActivity());
-                startActivityForResult(intent, REQUEST_CITY);
-            }
+        cityName.setOnClickListener(view1 -> {
+            Intent intent = CityActivity.getIntent(getActivity());
+            startActivityForResult(intent, REQUEST_CITY);
         });
 
         //todo:remove the listener
@@ -86,12 +84,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         });
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.fetchWeather();
-            }
-        });
+        refreshLayout.setOnRefreshListener(() -> presenter.fetchWeather());
     }
 
     @Override

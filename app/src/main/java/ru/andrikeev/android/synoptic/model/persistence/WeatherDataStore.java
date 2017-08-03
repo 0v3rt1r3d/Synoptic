@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.requery.Persistable;

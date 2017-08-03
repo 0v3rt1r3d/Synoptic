@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
+import ru.andrikeev.android.synoptic.model.data.ForecastItem;
 import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
@@ -31,6 +32,8 @@ import ru.andrikeev.android.synoptic.utils.units.TemperatureUnits;
  */
 @Singleton
 public class ModelsConverterImpl implements ModelsConverter {
+
+    private static final int DATE_FACTOR = 1000;
 
     private Settings settings;
 
@@ -150,7 +153,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         return new Weather(
                 weatherResponse.getCityId(),
                 weatherResponse.getCity(),
-                weatherResponse.getDate() * 1000,
+                weatherResponse.getDate() * DATE_FACTOR,
                 weatherResponse.getWeatherDescription().getId(),
                 weatherResponse.getWeatherDescription().getDescription(),
                 weatherResponse.getWeatherCondition().getTemperature(),
@@ -175,7 +178,7 @@ public class ModelsConverterImpl implements ModelsConverter {
                     message,
                     cityName,
                     cityId,
-                    dailyForecast.getDate(),
+                    dailyForecast.getDate() * DATE_FACTOR,
                     dailyForecast.getWeather().get(0).getDescription(),
                     dailyForecast.getClouds(),
                     dailyForecast.getSpeed(),
@@ -212,7 +215,8 @@ public class ModelsConverterImpl implements ModelsConverter {
                     message,
                     cityName,
                     cityId,
-                    forecast.getDate(),
+                    forecast.getDate() * DATE_FACTOR,
+                    forecast.getWeather().get(0).getId(),
                     forecast.getWeather().get(0).getDescription(),
                     forecast.getClouds().getPercents(),
                     forecast.getWind().getSpeed(),
@@ -228,7 +232,28 @@ public class ModelsConverterImpl implements ModelsConverter {
     }
 
     @Override
-    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecast) {
-        return null;
+    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecasts) {
+        Forecast first = forecasts.get(0);
+        int cityId = first.getCityId();
+        String cityName = first.getCityName();
+
+        List<ForecastItem> items = new ArrayList<>();
+
+        for(Forecast forecast:forecasts){
+            items.add(new ForecastItem(
+                    resolveWeatherIcon(forecast.getWeatherIconId()),
+                    DateUtils.formatDate(new Date(forecast.getDate())),
+                    forecast.getDescription(),
+                    getCloudsString(forecast.getClouds()),
+                    getWindString(forecast.getWindSpeed()),
+                    getTemperatureString(forecast.getTemperature()),
+                    getTemperatureUnits(),
+                    getPressureString(forecast.getPressure()),
+                    getHumidityString(forecast.getHumidity()),
+                    resolveWindDirection(forecast.getWindDegree())
+            ));
+        }
+
+        return new ForecastModel(cityId,cityName,items);
     }
 }

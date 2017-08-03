@@ -67,4 +67,7 @@
     <string name="pref_city_id" translatable="false">pref_keys.city_id</string>
 
     <string name="pref_city_id_default" translatable="false">5601538</string>
+    <string name="main_nav_forecast">Forecast</string>
+    <string name="main_nav_daily_forecast">Daily forecast</string>
+    <string name="menu_nav_weather">Weather</string>
 </resources>

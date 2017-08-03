@@ -10,11 +10,13 @@ import io.requery.Table;
 /**
  * Created by overtired on 01.08.17.
  */
-@Entity
-@Table(name = "forecast")
+//@Entity
+//@Table(name = "forecast")
 public class Forecast {
-    @Key @Generated
+    //@Key @Generated
     protected int id;
+
+    protected int weatherIconId;
 
     protected float message;
 
@@ -98,7 +100,12 @@ public class Forecast {
         return description;
     }
 
+    public int getWeatherIconId() {
+        return weatherIconId;
+    }
+
     protected Forecast(@NonNull Forecast forecast){
+        this.weatherIconId = forecast.getWeatherIconId();
         this.id = forecast.getCityId();
         this.message = forecast.getMessage();
         this.cityName = forecast.getCityName();
@@ -120,6 +127,7 @@ public class Forecast {
             @NonNull String cityName,
             int cityId,
             long date,
+            int weatherIconId,
             @NonNull String description,
             float clouds,
             float windSpeed,
@@ -133,6 +141,7 @@ public class Forecast {
         this.cityName = cityName;
         this.cityId = cityId;
         this.date = date;
+        this.weatherIconId = weatherIconId;
         this.description = description;
         this.clouds = clouds;
         this.windSpeed = windSpeed;

@@ -11,10 +11,10 @@ import io.requery.Table;
  * Created by overtired on 01.08.17.
  */
 
-@Entity
-@Table(name = "daily_forecast")
+//@Entity
+//@Table(name = "daily_forecast")
 public class DailyForecast {
-    @Key @Generated
+    //@Key @Generated
     protected int id;
 
     protected float message;

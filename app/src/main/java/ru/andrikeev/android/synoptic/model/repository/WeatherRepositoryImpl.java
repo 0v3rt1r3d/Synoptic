@@ -102,19 +102,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     public void fetchWeather() {
         loadRemoteAndSave(settings.getCityId()).subscribe(
-                new Consumer<Weather>() {
-                    @Override
-                    public void accept(@NonNull Weather weather) throws Exception {
-                        Timber.d("Weather fetched: %s", weather);
-                        subject.onNext(Resource.success(converter.toViewModel(weather)));
-                    }
+                weather -> {
+                    Timber.d("Weather fetched: %s", weather);
+                    subject.onNext(Resource.success(converter.toViewModel(weather)));
                 },
-                new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        Timber.e(throwable, "Error fetching weather");
-                        subject.onNext(Resource.<WeatherModel>error(throwable));
-                    }
+                throwable -> {
+                    Timber.e(throwable, "Error fetching weather");
+                    subject.onNext(Resource.<WeatherModel>error(throwable));
                 });
     }
 

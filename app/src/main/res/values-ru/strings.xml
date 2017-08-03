@@ -35,4 +35,7 @@
     <string name="pref_header_sync">Синхронизация</string>
     <string name="pref_header_units">Единицы измерения</string>
     <string name="city_activity_title">Выберете город</string>
+    <string name="main_nav_forecast">Прогноз</string>
+    <string name="main_nav_daily_forecast">Прогноз на неделю</string>
+    <string name="menu_nav_weather">Погода</string>
 </resources>
