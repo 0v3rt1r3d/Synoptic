@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 
 public class ForecastItem {
     private int weatherIconId;
+    private int windDirectionIconId;
+
     private String date;
     private String description;
     private String clouds;
@@ -16,8 +18,6 @@ public class ForecastItem {
     private String pressure;
     private String humidity;
     private String temperatureUnits;
-
-    private int windDirectionIconId;
 
     public ForecastItem(
             int weatherIconId,

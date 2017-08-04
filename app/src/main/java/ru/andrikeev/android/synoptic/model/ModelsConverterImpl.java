@@ -254,6 +254,6 @@ public class ModelsConverterImpl implements ModelsConverter {
             ));
         }
 
-        return new ForecastModel(cityId,cityName,items);
+        return ForecastModel.create(cityId,cityName,items);
     }
 }
