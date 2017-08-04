@@ -1,51 +1,29 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by overtired on 01.08.17.
  */
 
-public class Temp {
+@AutoValue
+public abstract class Temp {
     @SerializedName("day")
-    private float tempDay;
+    public abstract float tempDay();
 
     @SerializedName("night")
-    private float tempNight;
+    public abstract float tempNight();
 
     @SerializedName("eve")
-    private float tempEvening;
+    public abstract float tempEvening();
 
     @SerializedName("morn")
-    private float tempMorning;
-
-    @SerializedName("min")
-    private float tempMin;
-
-    @SerializedName("max")
-    private float tempMax;
-
-    public float getTempDay() {
-        return tempDay;
+    public abstract float tempMorning();
+    public static TypeAdapter<Temp> typeAdapter(Gson gson){
+        return new AutoValue_Temp.GsonTypeAdapter(gson);
     }
 
-    public float getTempNight() {
-        return tempNight;
-    }
-
-    public float getTempEvening() {
-        return tempEvening;
-    }
-
-    public float getTempMorning() {
-        return tempMorning;
-    }
-
-    public float getTempMin() {
-        return tempMin;
-    }
-
-    public float getTempMax() {
-        return tempMax;
-    }
 }

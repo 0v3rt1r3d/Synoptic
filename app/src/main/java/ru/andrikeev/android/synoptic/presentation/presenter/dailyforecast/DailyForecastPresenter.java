@@ -16,6 +16,9 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
 
     @Inject
     public DailyForecastPresenter(){
+    }
 
+    public void onResume(){
+        //getViewState().updateList();
     }
 }

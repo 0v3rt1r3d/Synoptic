@@ -1,23 +1,28 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Wind condition.
  */
-public class Wind {
+
+@AutoValue
+public abstract class Wind {
 
     @SerializedName("speed")
-    private float speed;
+    public abstract float speed();
 
     @SerializedName("deg")
-    private float degree;
+    public abstract float degree();
 
-    public float getSpeed() {
-        return speed;
+    public static Wind create(float speed, float degree){
+        return new AutoValue_Wind(speed,degree);
     }
 
-    public float getDegree() {
-        return degree;
+    public static TypeAdapter<Wind> typeAdapter(Gson gson) {
+        return new AutoValue_Wind.GsonTypeAdapter(gson);
     }
 }

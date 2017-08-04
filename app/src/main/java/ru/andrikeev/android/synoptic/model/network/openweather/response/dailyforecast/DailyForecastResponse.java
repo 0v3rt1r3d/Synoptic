@@ -1,5 +1,6 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast;
 
+import com.google.auto.value.AutoValue;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,25 +12,18 @@ import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyfor
  * Created by overtired on 01.08.17.
  */
 
-public class DailyForecastResponse {
+@AutoValue
+public abstract class DailyForecastResponse {
     @SerializedName("city")
-    private City city;
+    public abstract City city();
 
     @SerializedName("list")
-    private List<DailyForecast> forecastList;
+    public abstract List<DailyForecast> forecastList();
 
     @SerializedName("message")
-    private float message;
+    public abstract float message();
 
-    public City getCity() {
-        return city;
-    }
-
-    public List<DailyForecast> getForecastList() {
-        return forecastList;
-    }
-
-    public float getMessage() {
-        return message;
-    }
+//    public static DailyForecastResponse create(City city, List<DailyForecast> forecastList, float message){
+//        return new AutoValue_DailyForecastResponse(city,forecastList,message);
+//    }
 }

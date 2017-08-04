@@ -1,23 +1,17 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
+import com.google.auto.value.AutoValue;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Coordinates.
  */
-public class Coord {
+@AutoValue
+public abstract class Coord {
 
     @SerializedName("lon")
-    private float longitude;
+    public abstract float longitude();
 
     @SerializedName("lat")
-    private float latitude;
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
+    public abstract float latitude();
 }

@@ -3,6 +3,10 @@ package ru.andrikeev.android.synoptic.di;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -14,21 +18,25 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.andrikeev.android.synoptic.BuildConfig;
-import ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherApi;
+import ru.andrikeev.android.synoptic.model.GsonAdapterFactory;
 import ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesApi;
+import ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherApi;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherService.API_KEY_NAME;
 import static ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesService.API_KEY_PLACES;
+import static ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherService.API_KEY_NAME;
 
 /**
  * Module for network dependencies.
  */
-@Module
+@Module(includes = {GsonAdapterFactory.class})
 final class NetworkModule {
 
     private static final String BASE_URL_WEATHER = "base_url_weather";
     private static final String BASE_URL_PLACES = "base_url_places";
+
+    @Inject
+    Gson gson;
 
     /**
      * API key for Open Weather Api
@@ -112,11 +120,14 @@ final class NetworkModule {
     @NonNull
     OpenWeatherApi provideWeatherApi(@NonNull @Named(BASE_URL_WEATHER) String baseUrl,
                                      @NonNull OkHttpClient client) {
+
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                //todo:inject
+                //.addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(GsonAdapterFactory.create()).create()))
                 .build()
                 .create(OpenWeatherApi.class);
     }
@@ -128,7 +139,9 @@ final class NetworkModule {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                //todo:inject
+                //.addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(GsonAdapterFactory.create()).create()))
                 .client(client)
                 .build()
                 .create(GooglePlacesApi.class);

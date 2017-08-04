@@ -1,30 +1,25 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
+
 
 /**
  * Weather description.
  */
-public class WeatherDescription {
+
+@AutoValue
+public abstract class WeatherDescription {
 
     @SerializedName("id")
-    private int id;
-
-    @SerializedName("main")
-    private String shortDescription;
+    public abstract int id();
 
     @SerializedName("description")
-    private String description;
+    public abstract String description();
 
-    public int getId() {
-        return id;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public String getDescription() {
-        return description;
+    public static TypeAdapter<WeatherDescription> typeAdapter(Gson gson){
+        return new AutoValue_WeatherDescription.GsonTypeAdapter(gson);
     }
 }

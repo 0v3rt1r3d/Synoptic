@@ -29,7 +29,7 @@ public class CityAdapter extends Adapter<CityAdapter.CityHolder>{
         this.listener = listener;
     }
 
-    public void add(List<SuggestionModel> cities){
+    public void add(@NonNull List<SuggestionModel> cities){
         this.cities.addAll(cities);
     }
 
@@ -59,7 +59,6 @@ public class CityAdapter extends Adapter<CityAdapter.CityHolder>{
         private SuggestionModel city;
         private OnCityClickListener listener;
         private TextView textView;
-
 
         public CityHolder(View view, OnCityClickListener listener){
             super(view);

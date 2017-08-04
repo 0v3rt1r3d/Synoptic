@@ -1,44 +1,26 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Weather condition.
  */
-public class WeatherCondition {
+@AutoValue
+public abstract class WeatherCondition {
 
     @SerializedName("temp")
-    private float temperature;
+    public abstract float temperature();
 
     @SerializedName("pressure")
-    private float pressure;
+    public abstract float pressure();
 
     @SerializedName("humidity")
-    private float humidity;
+    public abstract float humidity();
 
-    @SerializedName("temp_min")
-    private float minTemperatire;
-
-    @SerializedName("temp_max")
-    private float maxTemperature;
-
-    public float getTemperature() {
-        return temperature;
-    }
-
-    public float getPressure() {
-        return pressure;
-    }
-
-    public float getHumidity() {
-        return humidity;
-    }
-
-    public float getMinTemperatire() {
-        return minTemperatire;
-    }
-
-    public float getMaxTemperature() {
-        return maxTemperature;
+    public static TypeAdapter<WeatherCondition> typeAdapter(Gson gson){
+        return new AutoValue_WeatherCondition.GsonTypeAdapter(gson);
     }
 }

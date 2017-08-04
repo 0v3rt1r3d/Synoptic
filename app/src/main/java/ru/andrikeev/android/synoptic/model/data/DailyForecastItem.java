@@ -1,5 +1,7 @@
 package ru.andrikeev.android.synoptic.model.data;
 
+import com.google.auto.value.AutoValue;
+
 import java.util.Date;
 
 /**

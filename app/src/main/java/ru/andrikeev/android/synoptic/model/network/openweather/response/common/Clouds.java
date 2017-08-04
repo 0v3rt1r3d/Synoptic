@@ -1,16 +1,20 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Clouds.
  */
-public class Clouds {
+@AutoValue
+public abstract class Clouds {
 
     @SerializedName("all")
-    private float percents;
+    public abstract float percents();
 
-    public float getPercents() {
-        return percents;
+    public static TypeAdapter<Clouds> typeAdapter(Gson gson){
+        return new AutoValue_Clouds.GsonTypeAdapter(gson);
     }
 }

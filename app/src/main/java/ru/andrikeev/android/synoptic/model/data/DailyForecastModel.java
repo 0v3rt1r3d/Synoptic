@@ -2,30 +2,30 @@ package ru.andrikeev.android.synoptic.model.data;
 
 import android.support.annotation.NonNull;
 
+import com.google.auto.value.AutoValue;
+
 import java.util.List;
 
 /**
  * Created by overtired on 01.08.17.
  */
 
-public class DailyForecastModel {
+@AutoValue
+public abstract class DailyForecastModel {
 
-    public DailyForecastModel(
+    public abstract String cityName();
+
+    public abstract long cityId();
+
+    public abstract float message();
+
+    public abstract List<DailyForecastItem> items();
+
+    public static DailyForecastModel create(
             @NonNull String cityName,
             long cityId,
             long message,
             @NonNull List<DailyForecastItem> items){
-        this.cityName = cityName;
-        this.cityId = cityId;
-        this.message = message;
-        this.items = items;
+        return  new AutoValue_DailyForecastModel(cityName,cityId,message,items);
     }
-
-    private String cityName;
-
-    private long cityId;
-
-    private long message;
-
-    private List<DailyForecastItem> items;
 }

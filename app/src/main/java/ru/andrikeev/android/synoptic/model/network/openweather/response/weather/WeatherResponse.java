@@ -1,6 +1,10 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.weather;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
 
 import java.util.List;
 
@@ -12,54 +16,31 @@ import ru.andrikeev.android.synoptic.model.network.openweather.response.common.W
 /**
  * Weather model from response.
  */
-public class WeatherResponse {
+@AutoValue
+public abstract class WeatherResponse {
 
     @SerializedName("weather")
-    private List<WeatherDescription> weatherDescription;
+    public abstract List<WeatherDescription> weatherDescription();
 
     @SerializedName("main")
-    private WeatherCondition weatherCondition;
+    public abstract WeatherCondition weatherCondition();
 
     @SerializedName("wind")
-    private Wind wind;
+    public abstract Wind wind();
 
     @SerializedName("clouds")
-    private Clouds clouds;
+    public abstract Clouds clouds();
 
     @SerializedName("dt")
-    private long date;
+    public abstract long date();
 
     @SerializedName("name")
-    private String city;
+    public abstract String city();
 
     @SerializedName("id")
-    private long cityId;
+    public abstract long cityId();
 
-    public WeatherDescription getWeatherDescription() {
-        return weatherDescription.get(0);
-    }
-
-    public WeatherCondition getWeatherCondition() {
-        return weatherCondition;
-    }
-
-    public Wind getWind() {
-        return wind;
-    }
-
-    public Clouds getClouds() {
-        return clouds;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public long getCityId() {
-        return cityId;
+    public static TypeAdapter<WeatherResponse> typeAdapter(Gson gson){
+        return new AutoValue_WeatherResponse.GsonTypeAdapter(gson);
     }
 }

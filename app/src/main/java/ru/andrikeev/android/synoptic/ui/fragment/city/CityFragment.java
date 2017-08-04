@@ -61,7 +61,6 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
         recyclerView.setAdapter(adapter);
 
         presenter.onTextChanged(RxTextView.textChanges(editText));
-
     }
 
     @Override

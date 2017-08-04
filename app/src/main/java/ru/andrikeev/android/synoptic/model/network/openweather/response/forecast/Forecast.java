@@ -1,8 +1,10 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.forecast;
 
+import com.google.auto.value.AutoValue;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 import ru.andrikeev.android.synoptic.model.network.openweather.response.common.WeatherCondition;
 import ru.andrikeev.android.synoptic.model.network.openweather.response.common.WeatherDescription;
@@ -13,40 +15,29 @@ import ru.andrikeev.android.synoptic.model.network.openweather.response.common.W
  * Created by overtired on 01.08.17.
  */
 
-public class Forecast {
+@AutoValue
+public abstract class Forecast {
     @SerializedName("dt")
-    private long date;
+    public abstract long date();
 
     @SerializedName("weather")
-    private List<WeatherDescription> weather;
+    public abstract List<WeatherDescription> weather();
 
     @SerializedName("clouds")
-    private Clouds clouds;
+    public abstract Clouds clouds();
 
     @SerializedName("wind")
-    private Wind wind;
+    public abstract Wind wind();
 
     @SerializedName("main")
-    private WeatherCondition condition;
+    public abstract WeatherCondition condition();
 
-
-    public WeatherCondition getCondition() {
-        return condition;
-    }
-
-    public Wind getWind() {
-        return wind;
-    }
-
-    public Clouds getClouds() {
-        return clouds;
-    }
-
-    public List<WeatherDescription> getWeather() {
-        return weather;
-    }
-
-    public long getDate() {
-        return date;
+    public static Forecast create(
+            long date,
+            List<WeatherDescription> weather,
+            Clouds clouds,
+            Wind wind,
+            WeatherCondition condition){
+        return new AutoValue_Forecast(date,weather,clouds,wind,condition);
     }
 }

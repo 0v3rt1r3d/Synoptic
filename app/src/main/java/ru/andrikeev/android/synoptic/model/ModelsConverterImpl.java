@@ -151,46 +151,45 @@ public class ModelsConverterImpl implements ModelsConverter {
 
     public Weather toCacheModel(@NonNull WeatherResponse weatherResponse) {
         return new Weather(
-                weatherResponse.getCityId(),
-                weatherResponse.getCity(),
-                weatherResponse.getDate() * DATE_FACTOR,
-                weatherResponse.getWeatherDescription().getId(),
-                weatherResponse.getWeatherDescription().getDescription(),
-                weatherResponse.getWeatherCondition().getTemperature(),
-                weatherResponse.getWeatherCondition().getPressure(),
-                weatherResponse.getWeatherCondition().getHumidity(),
-                weatherResponse.getWind().getSpeed(),
-                weatherResponse.getWind().getDegree(),
-                weatherResponse.getClouds().getPercents());
+                weatherResponse.cityId(),
+                weatherResponse.city(),
+                weatherResponse.date() * DATE_FACTOR,
+                weatherResponse.weatherDescription().get(0).id(),
+                weatherResponse.weatherDescription().get(0).description(),
+                weatherResponse.weatherCondition().temperature(),
+                weatherResponse.weatherCondition().pressure(),
+                weatherResponse.weatherCondition().humidity(),
+                weatherResponse.wind().speed(),
+                weatherResponse.wind().degree(),
+                weatherResponse.clouds().percents());
     }
 
     @Override
     public List<DailyForecast> toDailyForecastCacheModel(@NonNull DailyForecastResponse forecastResponse) {
         List<DailyForecast> result = new ArrayList<>();
 
-        int cityId = forecastResponse.getCity().getId();
-        float message = forecastResponse.getMessage();
-        String cityName = forecastResponse.getCity().getCityName();
+        int cityId = forecastResponse.city().id();
+        float message = forecastResponse.message();
+        String cityName = forecastResponse.city().cityName();
 
         for(ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
-                :forecastResponse.getForecastList()){
-            result.add(new DailyForecast(
-                    message,
-                    cityName,
-                    cityId,
-                    dailyForecast.getDate() * DATE_FACTOR,
-                    dailyForecast.getWeather().get(0).getDescription(),
-                    dailyForecast.getClouds(),
-                    dailyForecast.getSpeed(),
-                    dailyForecast.getDegree(),
-                    dailyForecast.getPressure(),
-                    dailyForecast.getHumidity(),
-                    dailyForecast.getTemp().getTempMin(),
-                    dailyForecast.getTemp().getTempMax(),
-                    dailyForecast.getTemp().getTempDay(),
-                    dailyForecast.getTemp().getTempNight(),
-                    dailyForecast.getTemp().getTempMorning(),
-                    dailyForecast.getTemp().getTempEvening()));
+                :forecastResponse.forecastList()){
+            result.add(DailyForecast.builder()
+                    .setMessage(message)
+                    .setCityId(cityId)
+                    .setCityName(cityName)
+                    .setDate(dailyForecast.date() * DATE_FACTOR)
+                    .setDescription(dailyForecast.weather().get(0).description())
+                    .setClouds(dailyForecast.clouds())
+                    .setWindSpeed(dailyForecast.speed())//todo: rename windspeed
+                    .setWindDegree(dailyForecast.degree())//todo: rename windDegree
+                    .setPressure(dailyForecast.pressure())
+                    .setHumidity(dailyForecast.humidity())
+                    .setTempDay(dailyForecast.temp().tempDay())
+                    .setTempNight(dailyForecast.temp().tempNight())
+                    .setTempMorning(dailyForecast.temp().tempMorning())
+                    .setTempEvening(dailyForecast.temp().tempEvening())
+                    .build());
         }
 
         return result;
@@ -203,29 +202,28 @@ public class ModelsConverterImpl implements ModelsConverter {
 
     @Override
     public List<Forecast> toForecastCacheModel(@NonNull ForecastResponse forecastResponse) {
-        int cityId = forecastResponse.getCity().getId();
-        float message = forecastResponse.getMessage();
-        String cityName = forecastResponse.getCity().getCityName();
+        int cityId = forecastResponse.city().id();
+        float message = forecastResponse.message();
+        String cityName = forecastResponse.city().cityName();
 
         List<Forecast> list = new ArrayList<>();
 
         for (ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.Forecast forecast
-                :forecastResponse.getForecastsList()) {
-            list.add(new Forecast(
-                    message,
-                    cityName,
-                    cityId,
-                    forecast.getDate() * DATE_FACTOR,
-                    forecast.getWeather().get(0).getId(),
-                    forecast.getWeather().get(0).getDescription(),
-                    forecast.getClouds().getPercents(),
-                    forecast.getWind().getSpeed(),
-                    forecast.getWind().getDegree(),
-                    forecast.getCondition().getTemperature(),
-                    forecast.getCondition().getPressure(),
-                    forecast.getCondition().getHumidity(),
-                    forecast.getCondition().getMinTemperatire(),
-                    forecast.getCondition().getMaxTemperature()));
+                :forecastResponse.forecastsList()) {
+            list.add(Forecast.builder()
+                    .setMessage(message)
+                    .setCityName(cityName)
+                    .setCityId(cityId)
+                    .setDate(forecast.date() * DATE_FACTOR)
+                    .setWeatherIconId(forecast.weather().get(0).id())
+                    .setDescription(forecast.weather().get(0).description())
+                    .setClouds(forecast.clouds().percents())
+                    .setWindSpeed(forecast.wind().speed())
+                    .setWindDegree(forecast.wind().degree())
+                    .setTemperature(forecast.condition().temperature())
+                    .setPressure(forecast.condition().pressure())
+                    .setHumidity(forecast.condition().humidity())
+                    .build());
         }
 
         return list;
@@ -234,23 +232,23 @@ public class ModelsConverterImpl implements ModelsConverter {
     @Override
     public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecasts) {
         Forecast first = forecasts.get(0);
-        int cityId = first.getCityId();
-        String cityName = first.getCityName();
+        int cityId = first.cityId();
+        String cityName = first.cityName();
 
         List<ForecastItem> items = new ArrayList<>();
 
         for(Forecast forecast:forecasts){
-            items.add(new ForecastItem(
-                    resolveWeatherIcon(forecast.getWeatherIconId()),
-                    DateUtils.formatDate(new Date(forecast.getDate())),
-                    forecast.getDescription(),
-                    getCloudsString(forecast.getClouds()),
-                    getWindString(forecast.getWindSpeed()),
-                    getTemperatureString(forecast.getTemperature()),
+            items.add(ForecastItem.create(
+                    resolveWeatherIcon(forecast.weatherIconId()),
+                    DateUtils.formatDate(new Date(forecast.date())),
+                    forecast.description(),
+                    getCloudsString(forecast.clouds()),
+                    getWindString(forecast.windSpeed()),
+                    getTemperatureString(forecast.temperature()),
                     getTemperatureUnits(),
-                    getPressureString(forecast.getPressure()),
-                    getHumidityString(forecast.getHumidity()),
-                    resolveWindDirection(forecast.getWindDegree())
+                    getPressureString(forecast.pressure()),
+                    getHumidityString(forecast.humidity()),
+                    resolveWindDirection(forecast.windDegree())
             ));
         }
 

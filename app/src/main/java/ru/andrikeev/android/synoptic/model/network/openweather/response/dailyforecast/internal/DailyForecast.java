@@ -1,5 +1,6 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal;
 
+import com.google.auto.value.AutoValue;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -10,61 +11,29 @@ import ru.andrikeev.android.synoptic.model.network.openweather.response.common.W
  * Created by overtired on 01.08.17.
  */
 
-public class DailyForecast {
+@AutoValue
+public abstract class DailyForecast {
     @SerializedName("dt")
-    private long date;
+    public abstract long date();
 
     @SerializedName("temp")
-    private Temp temp;
+    public abstract Temp temp();
 
     @SerializedName("weather")
-    private List<WeatherDescription> weather;
+    public abstract List<WeatherDescription> weather();
 
     @SerializedName("pressure")
-    private float pressure;
+    public abstract float pressure();
 
     @SerializedName("humidity")
-    private float humidity;
+    public abstract float humidity();
 
     @SerializedName("speed")
-    private float speed;
+    public abstract float speed();
 
     @SerializedName("deg")
-    private float degree;
+    public abstract float degree();
 
     @SerializedName("clouds")
-    private float clouds;
-
-
-    public List<WeatherDescription> getWeather() {
-        return weather;
-    }
-
-    public Temp getTemp() {
-        return temp;
-    }
-
-    public float getPressure() {
-        return pressure;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public float getDegree() {
-        return degree;
-    }
-
-    public float getClouds() {
-        return clouds;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public float getHumidity() {
-        return humidity;
-    }
+    public abstract float clouds();
 }
