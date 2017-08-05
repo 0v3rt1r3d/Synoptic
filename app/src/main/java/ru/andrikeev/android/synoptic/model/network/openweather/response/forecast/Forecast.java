@@ -1,6 +1,8 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.forecast;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -32,12 +34,7 @@ public abstract class Forecast {
     @SerializedName("main")
     public abstract WeatherCondition condition();
 
-    public static Forecast create(
-            long date,
-            List<WeatherDescription> weather,
-            Clouds clouds,
-            Wind wind,
-            WeatherCondition condition){
-        return new AutoValue_Forecast(date,weather,clouds,wind,condition);
+    public static TypeAdapter<Forecast> typeAdapter(Gson gson){
+        return new AutoValue_Forecast.GsonTypeAdapter(gson);
     }
 }

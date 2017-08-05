@@ -84,25 +84,31 @@ public class WeatherDataStore implements CacheService {
                 .insert(forecast)
                 .subscribeOn(Schedulers.io());
 
-        dataStore.select(Forecast.class)
-                .where(ForecastType.ID.eq(forecast.cityId()))
-                .get()
-                .observable()
-                .subscribeOn(Schedulers.single())
-                .singleOrError()
-                .onErrorResumeNext(insertion)
-                .flatMap(new Function<Forecast, SingleSource<Forecast>>() {
+//        dataStore.select(Forecast.class)
+//                .where(ForecastType.ID.eq(forecast.cityId()))
+//                .get()
+//                .observable()
+//                .subscribeOn(Schedulers.single())
+//                .singleOrError()
+//                .onErrorResumeNext(insertion)
+//                .flatMap(new Function<Forecast, SingleSource<Forecast>>() {
+//
+//                    @Override
+//                    public SingleSource<Forecast> apply(@NonNull Forecast forecast) throws Exception {
+//                        //updateWeatherEntity(weatherEntity, weather);
+//                        //return dataStore.update(weatherEntity);
+//                        return null;
+//                    }
+//                })
+//                .subscribe(
+//                        forecastEntity -> Timber.d("Forecast cached: %s", forecastEntity),
+//                        throwable -> Timber.e(throwable, "Error caching forecast")
+//                );
+    }
 
-                    @Override
-                    public SingleSource<Forecast> apply(@NonNull Forecast forecast) throws Exception {
-                        //updateWeatherEntity(weatherEntity, weather);
-                        //return dataStore.update(weatherEntity);
-                        return null;
-                    }
-                })
-                .subscribe(
-                        forecastEntity -> Timber.d("Forecast cached: %s", forecastEntity),
-                        throwable -> Timber.e(throwable, "Error caching forecast")
-                );
+    public void cacheDailyForecast(@NonNull DailyForecast dailyForecast){
+        Single<DailyForecast> insertion = dataStore
+                .insert(dailyForecast)
+                .subscribeOn(Schedulers.io());
     }
 }

@@ -46,33 +46,22 @@ public class CityResolver {
 
     public Single<Long> loadCityId(String placeId){
         return placesService.loadPlace(placeId)
-                .map(new Function<PlacesResponse, Location>() {
-                    @Override
-                    public Location apply(@NonNull PlacesResponse placesResponse) throws Exception {
-                        Timber.d("Status",placesResponse.getStatus());
-                        if(placesResponse.getStatus().equals(GooglePlacesApi.STATUS_OK)) {
-                            return placesResponse.getResultPlace().getGeometry().getLocation();
-                        }else {
-                            throw new Exception("Couldn't load this city");
-                        }
+                .map(placesResponse -> {
+                    Timber.d("Status",placesResponse.getStatus());
+                    if(placesResponse.getStatus().equals(GooglePlacesApi.STATUS_OK)) {
+                        return placesResponse.getResultPlace().getGeometry().getLocation();
+                    }else {
+                        throw new Exception("Couldn't load this city");
                     }
                 })
+                //todo: lambda?
                 .flatMap(new Function<Location, SingleSource<WeatherResponse>>() {
                     @Override
                     public SingleSource<WeatherResponse> apply(@NonNull Location location) throws Exception {
                         return weatherService.getWeather(location.getLatitude(), location.getLongitude());
                     }
                 })
-                .map(new Function<WeatherResponse, Weather>() {
-                    @Override
-                    public Weather apply(@NonNull WeatherResponse weatherResponse) throws Exception {
-                        return converter.toCacheModel(weatherResponse);
-                    }
-                }).map(new Function<Weather, Long>() {
-                    @Override
-                    public Long apply(@NonNull Weather weather) throws Exception {
-                        return weather.getCityId();
-                    }
-                });
+                .map(weatherResponse -> converter.toCacheModel(weatherResponse))
+                .map(weather -> weather.getCityId());
     }
 }

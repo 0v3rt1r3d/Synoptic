@@ -1,6 +1,8 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.common;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -15,8 +17,7 @@ public abstract class City {
     @SerializedName("id")
     public abstract int id();
 
-
-    //todo: does the field used?
-    @SerializedName("coord")
-    public abstract Coord coord();
+    public static TypeAdapter<City> typeAdapter(Gson gson){
+        return new AutoValue_City.GsonTypeAdapter(gson);
+    }
 }

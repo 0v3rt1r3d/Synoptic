@@ -49,56 +49,27 @@ public class CityPresenter extends RxPresenter<CityView> {
         getViewState().hideKeyboard();
 
         subscription = cityResolver.loadCityId(placeId)
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(@NonNull Long cityId) throws Exception {
-                        settings.setCityId(cityId);
-                        getViewState().hideProgressAndExit();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        getViewState().showError();
-                        getViewState().hideLoading();
-                    }
+                .subscribe(cityId -> {
+                    settings.setCityId(cityId);
+                    getViewState().hideProgressAndExit();
+                }, throwable -> {
+                    getViewState().showError();
+                    getViewState().hideLoading();
                 });
     }
 
-    public void onTextChanged(Observable<CharSequence> observable){
+    public void onTextChanged(Observable<CharSequence> observable) {
         textChangedSubscription = observable
                 .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .filter(new Predicate<CharSequence>() {
-                    @Override
-                    public boolean test(@NonNull CharSequence charSequence) throws Exception {
-                        return charSequence.length() > 0;
-                    }
-                }).map(new Function<CharSequence, String>() {
-
-                    @Override
-                    public String apply(@NonNull CharSequence charSequence) throws Exception {
-                        return charSequence.toString();
-                    }
-                }).subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(@NonNull String input) throws Exception {
-                        cityResolver.loadPredictions(input)
-                                .subscribe(new Consumer<List<SuggestionModel>>() {
-                                    @Override
-                                    public void accept(@NonNull List<SuggestionModel> suggestionModels) throws Exception {
-                                        getViewState().updateList(suggestionModels);
-                                    }
-                                }, new Consumer<Throwable>() {
-                                    @Override
-                                    public void accept(@NonNull Throwable throwable) throws Exception {
-                                        getViewState().showError();
-                                    }
-                                });
-                    }
-                });
+                .filter(charSequence -> charSequence.length() > 0)
+                .map(charSequence -> charSequence.toString())
+                .subscribe(input -> cityResolver.loadPredictions(input)
+                        .subscribe(suggestionModels -> getViewState().updateList(suggestionModels),
+                                throwable -> getViewState().showError()));
     }
 
-    public void onDestroyView(){
-        if(textChangedSubscription!=null){
+    public void onDestroyView() {
+        if (textChangedSubscription != null) {
             textChangedSubscription.dispose();
             textChangedSubscription = null;
         }

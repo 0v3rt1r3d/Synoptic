@@ -1,6 +1,8 @@
 package ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -36,4 +38,8 @@ public abstract class DailyForecast {
 
     @SerializedName("clouds")
     public abstract float clouds();
+
+    public static TypeAdapter<DailyForecast> typeAdapter(Gson gson){
+        return new AutoValue_DailyForecast.GsonTypeAdapter(gson);
+    }
 }
