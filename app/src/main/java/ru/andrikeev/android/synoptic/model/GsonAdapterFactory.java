@@ -16,18 +16,10 @@ import dagger.Provides;
  * Created by overtired on 04.08.17.
  */
 
-@Module
 @GsonTypeAdapterFactory
 public abstract class GsonAdapterFactory implements TypeAdapterFactory {
 
     public static TypeAdapterFactory create(){
         return new AutoValueGson_GsonAdapterFactory();
-    }
-
-    @Provides
-    @Singleton
-    @NonNull
-    public static Gson getGsonWithTypeAdapterFactory(){
-        return new GsonBuilder().registerTypeAdapterFactory(create()).create();
     }
 }

@@ -29,14 +29,11 @@ import static ru.andrikeev.android.synoptic.model.network.openweather.OpenWeathe
 /**
  * Module for network dependencies.
  */
-@Module(includes = {GsonAdapterFactory.class})
+@Module
 final class NetworkModule {
 
     private static final String BASE_URL_WEATHER = "base_url_weather";
     private static final String BASE_URL_PLACES = "base_url_places";
-
-    @Inject
-    Gson gson;
 
     /**
      * API key for Open Weather Api
@@ -119,14 +116,14 @@ final class NetworkModule {
     @Singleton
     @NonNull
     OpenWeatherApi provideWeatherApi(@NonNull @Named(BASE_URL_WEATHER) String baseUrl,
-                                     @NonNull OkHttpClient client) {
+                                     @NonNull OkHttpClient client,
+                                     @NonNull Gson gson) {
 
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                //todo:inject
-                //.addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(GsonAdapterFactory.create()).create()))
                 .build()
                 .create(OpenWeatherApi.class);
@@ -139,11 +136,16 @@ final class NetworkModule {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                //todo:inject
-                //.addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapterFactory(GsonAdapterFactory.create()).create()))
                 .client(client)
                 .build()
                 .create(GooglePlacesApi.class);
+    }
+
+    @Provides
+    @Singleton
+    @NonNull
+    public static Gson getGsonWithTypeAdapterFactory(){
+        return new GsonBuilder().registerTypeAdapterFactory(GsonAdapterFactory.create()).create();
     }
 }

@@ -1,12 +1,11 @@
 package ru.andrikeev.android.synoptic.model.persistence;
 
-import android.support.annotation.NonNull;
-
 import com.google.auto.value.AutoValue;
 
 import io.requery.Entity;
 import io.requery.Generated;
 import io.requery.Key;
+import io.requery.Persistable;
 import io.requery.Table;
 
 /**
@@ -15,7 +14,7 @@ import io.requery.Table;
 @Entity
 @Table(name = "forecast")
 @AutoValue
-public abstract class Forecast {
+public abstract class Forecast implements Persistable{
     @Key @Generated
     public abstract int id();
 

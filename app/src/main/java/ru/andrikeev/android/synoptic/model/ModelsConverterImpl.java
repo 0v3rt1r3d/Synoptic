@@ -230,14 +230,14 @@ public class ModelsConverterImpl implements ModelsConverter {
     }
 
     @Override
-    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecasts) {
-        Forecast first = forecasts.get(0);
+    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecastEntities) {
+        Forecast first = forecastEntities.get(0);
         int cityId = first.cityId();
         String cityName = first.cityName();
 
         List<ForecastItem> items = new ArrayList<>();
 
-        for(Forecast forecast:forecasts){
+        for(Forecast forecast : forecastEntities){
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
                     DateUtils.formatDate(new Date(forecast.date())),

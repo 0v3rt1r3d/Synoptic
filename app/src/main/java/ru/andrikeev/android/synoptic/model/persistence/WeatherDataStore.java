@@ -42,7 +42,9 @@ public class WeatherDataStore implements CacheService {
     }
 
     public void cacheWeather(@NonNull final Weather weather) {
-        Single<WeatherEntity> insertion = dataStore.insert(new WeatherEntity(weather)).subscribeOn(Schedulers.io());
+        Single<WeatherEntity> insertion = dataStore
+                .insert(new WeatherEntity(weather))
+                .subscribeOn(Schedulers.io());
 
         dataStore.select(WeatherEntity.class)
                 .where(WeatherEntity.CITY_ID.eq(weather.cityId))
@@ -75,5 +77,32 @@ public class WeatherDataStore implements CacheService {
         entity.setClouds(weather.getClouds());
         entity.setWindSpeed(weather.getWindSpeed());
         entity.setWindDegree(weather.getWindDegree());
+    }
+
+    public void cacheForecast(@NonNull Forecast forecast){
+        Single<Forecast> insertion = dataStore
+                .insert(forecast)
+                .subscribeOn(Schedulers.io());
+
+        dataStore.select(Forecast.class)
+                .where(ForecastType.ID.eq(forecast.cityId()))
+                .get()
+                .observable()
+                .subscribeOn(Schedulers.single())
+                .singleOrError()
+                .onErrorResumeNext(insertion)
+                .flatMap(new Function<Forecast, SingleSource<Forecast>>() {
+
+                    @Override
+                    public SingleSource<Forecast> apply(@NonNull Forecast forecast) throws Exception {
+                        //updateWeatherEntity(weatherEntity, weather);
+                        //return dataStore.update(weatherEntity);
+                        return null;
+                    }
+                })
+                .subscribe(
+                        forecastEntity -> Timber.d("Forecast cached: %s", forecastEntity),
+                        throwable -> Timber.e(throwable, "Error caching forecast")
+                );
     }
 }
