@@ -44,10 +44,12 @@ public class OpenWeatherService implements RemoteService {
     }
 
     public Single<ForecastResponse> getForecast(long cityId){
-        return api.getForecast(apiKey,settings.getLocale(),cityId);
+        return api.getForecast(apiKey,settings.getLocale(),cityId)
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<DailyForecastResponse> getDailyForecast(long cityId, int days){
-        return api.getDailyForecast(apiKey,settings.getLocale(),days,cityId);
+        return api.getDailyForecast(apiKey,settings.getLocale(),days,cityId)
+                .subscribeOn(Schedulers.io());
     }
 }

@@ -9,11 +9,16 @@ import dagger.Module;
 import dagger.Provides;
 import io.requery.Persistable;
 import io.requery.android.sqlite.DatabaseSource;
+import io.requery.meta.EntityModel;
+import io.requery.meta.EntityModelBuilder;
 import io.requery.reactivex.ReactiveEntityStore;
 import io.requery.reactivex.ReactiveSupport;
 import io.requery.sql.ConfigurationBuilder;
 import io.requery.sql.EntityDataStore;
+import ru.andrikeev.android.synoptic.model.persistence.Forecast;
+import ru.andrikeev.android.synoptic.model.persistence.ForecastType;
 import ru.andrikeev.android.synoptic.model.persistence.Models;
+import ru.andrikeev.android.synoptic.model.persistence.WeatherEntity;
 
 /**
  * Module for local data dependencies.

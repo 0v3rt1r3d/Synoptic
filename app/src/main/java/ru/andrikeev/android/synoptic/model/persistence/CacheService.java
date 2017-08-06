@@ -2,6 +2,8 @@ package ru.andrikeev.android.synoptic.model.persistence;
 
 import android.support.annotation.NonNull;
 
+import java.util.List;
+
 import io.reactivex.Single;
 
 /**
@@ -17,10 +19,13 @@ public interface CacheService {
      */
     Single<Weather> getWeather(long cityId);
 
+//    Single<List<Forecast>> getForecasts(long cityId);
+
     /**
      * Cache weather entity.
      *
      * @param weather weather
      */
     void cacheWeather(@NonNull final Weather weather);
+    void cacheForecasts(@NonNull final List<Forecast> forecasts);
 }
