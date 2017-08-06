@@ -12,13 +12,13 @@ import java.util.List;
 
 @AutoValue
 public abstract class ForecastModel {
-    public abstract int cityId();
+    public abstract long cityId();
     public abstract String cityName();
 
     public abstract List<ForecastItem> items();
 
     public static ForecastModel create(
-            int cityId,
+            long cityId,
             @NonNull String cityName,
             @NonNull List<ForecastItem> items) {
         return new AutoValue_ForecastModel(cityId,cityName,items);

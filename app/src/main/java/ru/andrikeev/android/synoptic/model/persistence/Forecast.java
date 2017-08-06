@@ -25,7 +25,7 @@ public abstract class Forecast implements Persistable{
 
     public abstract String cityName();
 
-    public abstract int cityId();
+    public abstract long cityId();
 
     public abstract long date();
 
@@ -46,7 +46,7 @@ public abstract class Forecast implements Persistable{
     @AutoValue.Builder
     public static abstract class Builder {
         public abstract Builder setId(int id);
-        public abstract Builder setCityId(int cityId);
+        public abstract Builder setCityId(long cityId);
         public abstract Builder setCityName(String cityName);
         public abstract Builder setHumidity(float humidity);
         public abstract Builder setPressure(float pressure);

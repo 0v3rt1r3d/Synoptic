@@ -18,6 +18,8 @@ public interface CacheService {
      * @return {@link Single} with restored {@link Weather}
      */
     Single<Weather> getWeather(long cityId);
+    Single<List<Forecast>> getForecasts(long cityId, float message);
+    Single<List<DailyForecast>> getDailyForecasts(long cityId, float message);
 
 //    Single<List<Forecast>> getForecasts(long cityId);
 

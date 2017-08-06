@@ -2,6 +2,7 @@ package ru.andrikeev.android.synoptic.model.persistence;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.LongConsumer;
 import io.reactivex.schedulers.Schedulers;
 import io.requery.Persistable;
 import io.requery.reactivex.ReactiveEntityStore;
@@ -44,6 +46,36 @@ public class WeatherDataStore implements CacheService {
                 .map(weatherEntity -> {
                     Timber.d("Weather restored from cache: %s", weatherEntity);
                     return new Weather(weatherEntity);
+                });
+    }
+
+    @Override
+    public Single<List<Forecast>> getForecasts(long cityId, float message) {
+        return dataStore.select(Forecast.class)
+                //.where(ForecastType.CITY_ID.eq(cityId).and(ForecastType.MESSAGE.eq(message)))
+                //todo: normal getting with message
+                .where(ForecastType.CITY_ID.eq(cityId))
+                .get()
+                .observable()
+                .subscribeOn(Schedulers.io())
+                .toList()
+                .map(forecasts -> {
+                    Timber.d("Forecasts restored from cache: %s",forecasts);
+                    return forecasts;
+                });
+    }
+
+    @Override
+    public Single<List<DailyForecast>> getDailyForecasts(long cityId, float message) {
+        return dataStore.select(DailyForecast.class)
+                .where(DailyForecastType.CITY_ID.eq(cityId).and(ForecastType.MESSAGE.eq(message)))
+                .get()
+                .observable()
+                .subscribeOn(Schedulers.io())
+                .toList()
+                .map(forecasts -> {
+                    Timber.d("Forecasts restored from cache: %s",forecasts);
+                    return forecasts;
                 });
     }
 
@@ -120,7 +152,7 @@ public class WeatherDataStore implements CacheService {
 
         //todo:check insertion
         dataStore.select(Forecast.class)
-                .where(ForecastType.ID.eq(forecast.cityId()))
+                .where(ForecastType.MESSAGE.eq(forecast.message()))
                 .get()
                 .observable()
                 .subscribeOn(Schedulers.single())

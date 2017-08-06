@@ -234,7 +234,7 @@ public class ModelsConverterImpl implements ModelsConverter {
     @Override
     public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecastEntities) {
         Forecast first = forecastEntities.get(0);
-        int cityId = first.cityId();
+        long cityId = first.cityId();
         String cityName = first.cityName();
 
         List<ForecastItem> items = new ArrayList<>();

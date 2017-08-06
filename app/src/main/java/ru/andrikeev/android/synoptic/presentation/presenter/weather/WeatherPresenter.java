@@ -7,13 +7,16 @@ import com.arellomobile.mvp.InjectViewState;
 import javax.inject.Inject;
 
 import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import ru.andrikeev.android.synoptic.application.Settings;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
+import timber.log.Timber;
 
 /**
  * Presenter for {@link WeatherView} with
@@ -87,6 +90,24 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
     public void fetchDailyForecast(){
         repository.fetchDailyForecast();
+        repository.loadForecasts()
+                .subscribe(new SingleObserver<ForecastModel>(){
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(ForecastModel forecastModel) {
+                        Timber.d("Forecast was restored from storage %s",forecastModel.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.d("Forecast restoring failed");
+                    }
+                });
     }
 
     public void fetchForecast(){

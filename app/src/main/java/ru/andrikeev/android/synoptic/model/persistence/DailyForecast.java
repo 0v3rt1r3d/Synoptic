@@ -26,7 +26,7 @@ public abstract class DailyForecast implements Persistable {
 
     public abstract String cityName();
 
-    public abstract int cityId();
+    public abstract long cityId();
 
     public abstract long date();
 
@@ -62,7 +62,7 @@ public abstract class DailyForecast implements Persistable {
 
         public abstract Builder setCityName(String cityName);
 
-        public abstract Builder setCityId(int cityId);
+        public abstract Builder setCityId(long cityId);
 
         public abstract Builder setDate(long date);
 
