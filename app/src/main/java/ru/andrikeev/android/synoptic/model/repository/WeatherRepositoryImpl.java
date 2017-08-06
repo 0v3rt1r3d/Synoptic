@@ -17,6 +17,7 @@ import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.network.RemoteService;
 import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
 import ru.andrikeev.android.synoptic.model.persistence.CacheService;
+import ru.andrikeev.android.synoptic.model.persistence.DailyForecast;
 import ru.andrikeev.android.synoptic.model.persistence.Forecast;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import timber.log.Timber;
@@ -110,6 +111,16 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 });
     }
 
+    private Single<List<DailyForecast>> loadDailyForecastAndSave(long cityId){
+        return remoteService.getDailyForecast(cityId,16)//todo: count
+                .map(dailyForecastResponse -> {
+                    Timber.d("Forecast loaded from api: %s",dailyForecastResponse);
+                    List<DailyForecast> forecasts = converter.toDailyForecastCacheModel(dailyForecastResponse);
+                    cacheService.cacheDailyForecasts(forecasts);
+                    return forecasts;
+                });
+    }
+
     public void fetchWeather() {
         loadWeatherRemoteAndSave(settings.getCityId()).subscribe(
                 weather -> {
@@ -136,23 +147,19 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @Override
     public void fetchDailyForecast() {
-        remoteService.getDailyForecast(settings.getCityId(), 16)//todo:count of forecastes
-                .subscribeOn(Schedulers.io())
-                .subscribe((DailyForecastResponse response) ->
-                                Timber.d("DailyForecast loaded"),
-                        Throwable::printStackTrace);
+        loadDailyForecastAndSave(settings.getCityId())
+                .subscribe(
+                        dailyForecasts -> Timber.d("Forecasts fetched: %s",dailyForecasts),
+                        throwable -> Timber.e(throwable,"Error fetching forecast")
+                );
     }
 
     @Override
     public void fetchForecast() {
         loadForecastRemoteAndSave(settings.getCityId())
                 .subscribe(
-                        forecasts -> {
-                            Timber.d("Forecasts fetched: %s",forecasts);
-                        },
-                        throwable -> {
-                            Timber.e(throwable,"Error fetching forecast");
-                        }
+                        forecasts -> Timber.d("Forecasts fetched: %s",forecasts),
+                        throwable -> Timber.e(throwable,"Error fetching forecast")
                 );
 //        remoteService.getForecast(settings.getCityId())
 //                .subscribeOn(Schedulers.io())

@@ -175,6 +175,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         for(ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
                 :forecastResponse.forecastList()){
             result.add(DailyForecast.builder()
+                    .setId(-1)
                     .setMessage(message)
                     .setCityId(cityId)
                     .setCityName(cityName)
@@ -211,7 +212,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         for (ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.Forecast forecast
                 :forecastResponse.forecastsList()) {
             list.add(Forecast.builder()
-                    .setId(1)
+                    .setId(-1)
                     .setMessage(message)
                     .setCityName(cityName)
                     .setCityId(cityId)

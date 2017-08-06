@@ -17,8 +17,9 @@ import io.requery.Table;
 @Entity
 @Table(name = "daily_forecast")
 @AutoValue
-public abstract class DailyForecast implements Persistable{
-    @Key @Generated
+public abstract class DailyForecast implements Persistable {
+    @Key
+    @Generated
     public abstract int id();
 
     public abstract float message();
@@ -49,27 +50,42 @@ public abstract class DailyForecast implements Persistable{
 
     public abstract float tempDay();
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new AutoValue_DailyForecast.Builder();
     }
 
     @AutoValue.Builder
     public static abstract class Builder {
         public abstract Builder setId(int id);
+
         public abstract Builder setMessage(float message);
+
         public abstract Builder setCityName(String cityName);
+
         public abstract Builder setCityId(int cityId);
+
         public abstract Builder setDate(long date);
+
         public abstract Builder setDescription(String description);
+
         public abstract Builder setClouds(float clouds);
+
         public abstract Builder setWindSpeed(float windSpeed);
+
         public abstract Builder setWindDegree(float windDegree);
+
         public abstract Builder setPressure(float pressure);
+
         public abstract Builder setHumidity(float humidity);
+
         public abstract Builder setTempMorning(float tempMorning);
+
         public abstract Builder setTempEvening(float tempEvening);
+
         public abstract Builder setTempNight(float tempNight);
+
         public abstract Builder setTempDay(float tempDay);
+
         public abstract DailyForecast build();
     }
 }

@@ -89,6 +89,14 @@ public class WeatherDataStore implements CacheService {
         }
     }
 
+    @Override
+    public void cacheDailyForecasts(@NonNull List<DailyForecast> forecasts) {
+        for(DailyForecast forecast:forecasts){
+            cacheDailyForecast(forecast);
+        }
+    }
+
+
     private static void updateWeatherEntity(@NonNull WeatherEntity entity, @NonNull Weather weather) {
         entity.setCityName(weather.getCityName());
         entity.setTimestamp(weather.getTimestamp());
@@ -103,13 +111,14 @@ public class WeatherDataStore implements CacheService {
     }
 
     public void cacheForecast(@NonNull Forecast forecast) {
-        Disposable insertion = dataStore
-                .insert(forecast,Integer.class)
+        //todo:disposable?
+        dataStore.insert(forecast, Integer.class)
                 .subscribeOn(Schedulers.io())
-                .subscribe(forecast1 -> {},throwable -> {
-                    Timber.d(throwable,"Did not cache forecast");
-                });
+                .subscribe(forecast1 -> {
+                }, throwable ->
+                        Timber.d(throwable, "Did not cache forecast"));
 
+        //todo:check insertion
         dataStore.select(Forecast.class)
                 .where(ForecastType.ID.eq(forecast.cityId()))
                 .get()
@@ -126,7 +135,9 @@ public class WeatherDataStore implements CacheService {
                         completable -> {
                             Timber.d("Last forecast deleted");
                         },
-                        throwable -> {Timber.d("Last forecast was not deleted");});
+                        throwable -> {
+                            Timber.d("Last forecast was not deleted");
+                        });
 //                .subscribe(
 //                        forecastEntity -> Timber.d("Forecast cached: %s", forecastEntity),
 //                        throwable -> Timber.e(throwable, "Error caching forecast")
@@ -135,8 +146,9 @@ public class WeatherDataStore implements CacheService {
     }
 
     public void cacheDailyForecast(@NonNull DailyForecast dailyForecast) {
-        Single<DailyForecast> insertion = dataStore
-                .insert(dailyForecast)
-                .subscribeOn(Schedulers.io());
+        //todo: disposable?
+        dataStore.insert(dailyForecast, Integer.class)
+                .subscribeOn(Schedulers.io())
+                .subscribe(dailyForecast1->{},throwable -> Timber.d("Did not cache daily forecast"));
     }
 }

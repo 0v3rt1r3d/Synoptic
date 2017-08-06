@@ -28,4 +28,5 @@ public interface CacheService {
      */
     void cacheWeather(@NonNull final Weather weather);
     void cacheForecasts(@NonNull final List<Forecast> forecasts);
+    void cacheDailyForecasts(@NonNull final List<DailyForecast> forecasts);
 }
