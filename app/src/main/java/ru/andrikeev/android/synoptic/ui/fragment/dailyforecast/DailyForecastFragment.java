@@ -3,10 +3,13 @@ package ru.andrikeev.android.synoptic.ui.fragment.dailyforecast;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 
 import javax.inject.Inject;
 
@@ -30,14 +33,30 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        recyclerView = view.findViewById(R.id.recycler_daily_forecast);
+        adapter = new DailyForecastAdapter();
+
+
+        recyclerView = view.findViewById(R.id.recyclerDailyForecast);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void updateList(@NonNull DailyForecastModel model){
-        adapter.clear();
-        adapter.add(model.items());
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
+    }
+
+    @Override
+    public void setDailyForecast(@NonNull DailyForecastModel model){
+        adapter.setDailyForecast(model);
+        adapter.notifyDataSetChanged();
         adapter.notifyItemRangeChanged(0,model.items().size());
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(getActivity(),"Error!",Toast.LENGTH_SHORT).show();
     }
 
     @Inject
@@ -50,6 +69,7 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
     }
 
     @Override
+    @ProvidePresenter
     protected DailyForecastPresenter providePresenter() {
         return presenter;
     }

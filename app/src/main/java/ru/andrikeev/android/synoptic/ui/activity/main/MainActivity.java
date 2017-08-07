@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity
                 }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container,fragment,WeatherFragment.TAG)
-                        .commitNow();
+                        .commit();
                 break;
 
             case R.id.nav_forecast:
@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity
                 }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container,fragment,ForecastFragment.TAG)
-                        .commitNow();
+                        .commit();
                 break;
 
             case R.id.nav_daily_forecast:
@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity
                 }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container,fragment,DailyForecastFragment.TAG)
-                        .commitNow();
+                        .commit();
                 break;
 
             case R.id.nav_settings:

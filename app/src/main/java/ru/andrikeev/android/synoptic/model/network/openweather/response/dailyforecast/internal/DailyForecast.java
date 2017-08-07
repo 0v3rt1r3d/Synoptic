@@ -30,11 +30,11 @@ public abstract class DailyForecast {
     @SerializedName("humidity")
     public abstract float humidity();
 
-    @SerializedName("speed")
-    public abstract float speed();
+    @SerializedName("windSpeed")
+    public abstract float windSpeed();
 
     @SerializedName("deg")
-    public abstract float degree();
+    public abstract float windDegree();
 
     @SerializedName("clouds")
     public abstract float clouds();

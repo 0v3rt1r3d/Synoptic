@@ -53,7 +53,8 @@ public class ForecastFragment extends BaseFragment<ForecastView,ForecastPresente
         recycler.setAdapter(adapter);
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnClickListener(v->{
+        refreshLayout.setOnRefreshListener(()->{
+            refreshLayout.setRefreshing(false);
             //todo: update
         });
     }
@@ -77,7 +78,7 @@ public class ForecastFragment extends BaseFragment<ForecastView,ForecastPresente
     public void setForecast(@NonNull ForecastModel forecast) {
         adapter.setForecast(forecast);
         //todo:
-        //adapter.notifyItemRangeChanged(0,forecast.items().size());
+        adapter.notifyItemRangeChanged(0,forecast.items().size());
         adapter.notifyDataSetChanged();
     }
 

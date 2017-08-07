@@ -55,7 +55,7 @@ public class WeatherModel {
     private String humidity;
 
     /**
-     * Wind speed.
+     * Wind windSpeed.
      */
     @NonNull
     private String windSpeed;

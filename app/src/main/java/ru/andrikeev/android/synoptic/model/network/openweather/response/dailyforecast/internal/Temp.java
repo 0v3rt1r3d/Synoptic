@@ -22,6 +22,7 @@ public abstract class Temp {
 
     @SerializedName("morn")
     public abstract float tempMorning();
+
     public static TypeAdapter<Temp> typeAdapter(Gson gson){
         return new AutoValue_Temp.GsonTypeAdapter(gson);
     }

@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:textSize="24sp"
-            app:layout_constraintLeft_toRightOf="@id/weather_icon"
+            app:layout_constraintLeft_toRightOf="@id/weatherIcon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Weather" />
 

@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 @AutoValue
 public abstract class Wind {
 
-    @SerializedName("speed")
+    @SerializedName("windSpeed")
     public abstract float speed();
 
     @SerializedName("deg")

@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.application.Settings;
+import ru.andrikeev.android.synoptic.model.data.DailyForecastItem;
 import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
 import ru.andrikeev.android.synoptic.model.data.ForecastItem;
 import ru.andrikeev.android.synoptic.model.data.ForecastModel;
@@ -80,7 +81,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         } else if (windDegree >= 348.75 && windDegree <= 360) {
             return R.drawable.ic_weather_wind_direction_north;
         } else {
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "Wrong wind degree %.3f", windDegree));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Wrong wind windDegree %.3f", windDegree));
         }
     }
 
@@ -172,8 +173,8 @@ public class ModelsConverterImpl implements ModelsConverter {
         float message = forecastResponse.message();
         String cityName = forecastResponse.city().cityName();
 
-        for(ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
-                :forecastResponse.forecastList()){
+        for (ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
+                : forecastResponse.forecastList()) {
             result.add(DailyForecast.builder()
                     .setId(-1)
                     .setMessage(message)
@@ -182,23 +183,19 @@ public class ModelsConverterImpl implements ModelsConverter {
                     .setDate(dailyForecast.date() * DATE_FACTOR)
                     .setDescription(dailyForecast.weather().get(0).description())
                     .setClouds(dailyForecast.clouds())
-                    .setWindSpeed(dailyForecast.speed())//todo: rename windspeed
-                    .setWindDegree(dailyForecast.degree())//todo: rename windDegree
+                    .setWindSpeed(dailyForecast.windSpeed())//todo: rename windspeed
+                    .setWindDegree(dailyForecast.windDegree())//todo: rename windDegree
                     .setPressure(dailyForecast.pressure())
                     .setHumidity(dailyForecast.humidity())
                     .setTempDay(dailyForecast.temp().tempDay())
                     .setTempNight(dailyForecast.temp().tempNight())
                     .setTempMorning(dailyForecast.temp().tempMorning())
                     .setTempEvening(dailyForecast.temp().tempEvening())
+                    .setWeatherIconId(dailyForecast.weather().get(0).id())
                     .build());
         }
 
         return result;
-    }
-
-    @Override
-    public DailyForecastModel toDailyForecastViewModel(@NonNull List<DailyForecast> forecast) {
-        return null;
     }
 
     @Override
@@ -210,7 +207,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         List<Forecast> list = new ArrayList<>();
 
         for (ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.Forecast forecast
-                :forecastResponse.forecastsList()) {
+                : forecastResponse.forecastsList()) {
             list.add(Forecast.builder()
                     .setId(-1)
                     .setMessage(message)
@@ -232,6 +229,35 @@ public class ModelsConverterImpl implements ModelsConverter {
     }
 
     @Override
+    public DailyForecastModel toDailyForecastViewModel(@NonNull List<DailyForecast> dailyForecastList) {
+        DailyForecast first = dailyForecastList.get(0);
+        long cityId = first.cityId();
+        String cityName = first.cityName();
+        float message = first.message();
+
+        List<DailyForecastItem> items = new ArrayList<>();
+
+        for (DailyForecast forecast : dailyForecastList) {
+            items.add(DailyForecastItem.create(
+                    resolveWindDirection(forecast.windDegree()),
+                    resolveWeatherIcon(forecast.weatherIconId()),
+                    DateUtils.formatDate(new Date(forecast.date())),
+                    getTemperatureString(forecast.tempDay()),
+                    getTemperatureString(forecast.tempNight()),
+                    getTemperatureString(forecast.tempEvening()),
+                    getTemperatureString(forecast.tempMorning()),
+                    forecast.description(),
+                    getPressureString(forecast.pressure()),
+                    getHumidityString(forecast.humidity()),
+                    getWindString(forecast.windSpeed()),
+                    getCloudsString(forecast.clouds())
+            ));
+        }
+
+        return DailyForecastModel.create(cityName,cityId,message,items);
+    }
+
+    @Override
     public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecastEntities) {
         Forecast first = forecastEntities.get(0);
         long cityId = first.cityId();
@@ -239,7 +265,7 @@ public class ModelsConverterImpl implements ModelsConverter {
 
         List<ForecastItem> items = new ArrayList<>();
 
-        for(Forecast forecast : forecastEntities){
+        for (Forecast forecast : forecastEntities) {
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
                     DateUtils.formatDate(new Date(forecast.date())),
@@ -254,6 +280,6 @@ public class ModelsConverterImpl implements ModelsConverter {
             ));
         }
 
-        return ForecastModel.create(cityId,cityName,items);
+        return ForecastModel.create(cityId, cityName, items);
     }
 }

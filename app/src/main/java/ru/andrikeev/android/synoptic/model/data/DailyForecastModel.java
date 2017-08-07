@@ -24,7 +24,7 @@ public abstract class DailyForecastModel {
     public static DailyForecastModel create(
             @NonNull String cityName,
             long cityId,
-            long message,
+            float message,
             @NonNull List<DailyForecastItem> items){
         return  new AutoValue_DailyForecastModel(cityName,cityId,message,items);
     }

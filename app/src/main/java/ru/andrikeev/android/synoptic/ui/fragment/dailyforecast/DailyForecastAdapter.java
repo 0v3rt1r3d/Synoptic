@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +22,10 @@ import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 
 public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdapter.DailyForecastHolder> {
 
-    private List<DailyForecastItem> forecasts;
+    private DailyForecastModel forecasts;
 
-    public DailyForecastAdapter() {
-        this.forecasts = new ArrayList<>();
-    }
-
-    public void clear() {
-        this.forecasts.clear();
-    }
-
-    public void add(@NonNull List<DailyForecastItem> forecasts) {
-        this.forecasts.addAll(forecasts);
+    public void setDailyForecast(@NonNull DailyForecastModel forecasts) {
+        this.forecasts = forecasts;
     }
 
     @Override
@@ -43,29 +37,73 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
 
     @Override
     public void onBindViewHolder(DailyForecastHolder holder, int position) {
-
+        holder.setItem(forecasts.items().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return forecasts.size();
+        if(forecasts!=null && forecasts.items()!=null){
+            return forecasts.items().size();
+        }
+        return 0;
     }
 
     public class DailyForecastHolder extends RecyclerView.ViewHolder {
+        private DailyForecastItem item;
 
-        private ForecastModel forecast;
+        private TextView temperatureDay;
+        private TextView temperatureNight;
+        private TextView temperatureMorning;
+        private TextView temperatureEvening;
+        private TextView temperatureUnits;
+        private TextView windSpeed;
+        private TextView humidity;
+        private TextView pressure;
+        private TextView date;
+        private TextView clouds;
+        private TextView description;
 
-        public void setForecast(@NonNull ForecastModel forecast) {
-            this.forecast = forecast;
+        private ImageView weatherIcon;
+        private ImageView windDirectionIcon;
+
+
+        public void setItem(@NonNull DailyForecastItem item) {
+            this.item = item;
             updateHolder();
         }
 
         private void updateHolder() {
-            //todo:
+            temperatureDay.setText(item.tempDay());
+            temperatureNight.setText(item.tempNight());
+            temperatureMorning.setText(item.tempMorning());
+            temperatureEvening.setText(item.tempEvening());
+            //temperatureUnits.setText(item); todo temperature units
+            windSpeed.setText(item.windSpeed());
+            humidity.setText(item.humidity());
+            pressure.setText(item.pressure());
+            date.setText(item.date());
+            clouds.setText(item.clouds());
+            description.setText(item.description());
+
+            weatherIcon.setImageResource(item.weatherIconId());
+            windDirectionIcon.setImageResource(item.windDirectionIconId());
         }
 
         public DailyForecastHolder(View itemView) {
             super(itemView);
+            temperatureDay = itemView.findViewById(R.id.temperatureDay);
+            temperatureNight = itemView.findViewById(R.id.temperatureNight);
+            temperatureMorning = itemView.findViewById(R.id.temperatureMorning);
+            temperatureEvening = itemView.findViewById(R.id.temperatureEvening);
+            temperatureUnits = itemView.findViewById(R.id.temperatureUnits);
+            windSpeed = itemView.findViewById(R.id.windSpeed);
+            humidity = itemView.findViewById(R.id.humidity);
+            pressure = itemView.findViewById(R.id.pressure);
+            date = itemView.findViewById(R.id.date);
+            clouds = itemView.findViewById(R.id.clouds);
+            description = itemView.findViewById(R.id.description);
+            weatherIcon = itemView.findViewById(R.id.weatherIcon);
+            windDirectionIcon = itemView.findViewById(R.id.windDirectionIcon);
         }
     }
 }

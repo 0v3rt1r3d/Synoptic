@@ -11,23 +11,15 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class ForecastItem {
     public abstract int weatherIconId();
-
     public abstract int windDirectionIconId();
 
     public abstract String date();
-
     public abstract String description();
-
     public abstract String clouds();
-
     public abstract String windSpeed();
-
     public abstract String temperature();
-
     public abstract String pressure();
-
     public abstract String humidity();
-
     public abstract String temperatureUnits();
 
     public static ForecastItem create(

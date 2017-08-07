@@ -91,7 +91,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public Single<DailyForecastModel> loadDailyForecast() {
         return cacheService.getDailyForecasts(settings.getCityId(),0.0f)
                 .onErrorResumeNext(loadDailyForecastAndSave(settings.getCityId()))
-                .map(forecasts -> converter.toDailyForecastViewModel(forecasts));
+                .map(forecasts -> converter.toDailyForecastViewModel(forecasts))
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @NonNull

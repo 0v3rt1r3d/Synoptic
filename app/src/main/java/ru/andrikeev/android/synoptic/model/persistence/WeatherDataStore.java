@@ -68,7 +68,9 @@ public class WeatherDataStore implements CacheService {
     @Override
     public Single<List<DailyForecast>> getDailyForecasts(long cityId, float message) {
         return dataStore.select(DailyForecast.class)
-                .where(DailyForecastType.CITY_ID.eq(cityId).and(ForecastType.MESSAGE.eq(message)))
+                //.where(DailyForecastType.CITY_ID.eq(cityId).and(ForecastType.MESSAGE.eq(message)))
+                //todo message like above
+                .where(DailyForecastType.CITY_ID.eq(cityId))
                 .get()
                 .observable()
                 .subscribeOn(Schedulers.io())
