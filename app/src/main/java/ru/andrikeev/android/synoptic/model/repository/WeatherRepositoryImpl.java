@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.ModelsConverter;
@@ -81,7 +82,9 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public Single<ForecastModel> loadForecasts() {
         return cacheService.getForecasts(settings.getCityId(),0.0f)
                 .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
-                .map(forecasts -> converter.toForecastViewModel(forecasts));
+                .map(forecasts -> converter.toForecastViewModel(forecasts))
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
     @Override

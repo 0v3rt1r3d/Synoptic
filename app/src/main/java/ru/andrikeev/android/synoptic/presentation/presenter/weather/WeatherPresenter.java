@@ -95,7 +95,6 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
