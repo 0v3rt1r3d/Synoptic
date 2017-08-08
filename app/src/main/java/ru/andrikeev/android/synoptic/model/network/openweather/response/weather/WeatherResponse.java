@@ -32,7 +32,7 @@ public abstract class WeatherResponse {
     public abstract Clouds clouds();
 
     @SerializedName("dt")
-    public abstract long date();
+    public abstract long timestamp();
 
     @SerializedName("name")
     public abstract String city();

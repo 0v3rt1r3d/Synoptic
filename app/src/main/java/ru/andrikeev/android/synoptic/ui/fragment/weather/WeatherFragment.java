@@ -110,17 +110,17 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     @Override
     public void showWeather(WeatherModel model) {
-        cityName.setText(model.getCityName());
-        lastUpdate.setText(model.getDate());
-        weatherIcon.setImageResource(model.getWeatherIconId());
-        temperature.setText(model.getTemperature());
-        temperatureUnits.setText(model.getTemperatureUnits());
-        description.setText(model.getDescription());
-        pressure.setText(model.getPressure());
-        humidity.setText(model.getHumidity());
-        wind.setText(model.getWindSpeed());
-        windDirection.setImageResource(model.getWindDirectionIconId());
-        clouds.setText(model.getClouds());
+        //cityName.setText(model.getCityName()); // TODO: 08.08.17 cityName?
+        lastUpdate.setText(model.date());
+        weatherIcon.setImageResource(model.weatherIconId());
+        temperature.setText(model.temperature());
+        temperatureUnits.setText(model.temperatureUnits());
+        description.setText(model.description());
+        pressure.setText(model.pressure());
+        humidity.setText(model.humidity());
+        wind.setText(model.windSpeed());
+        windDirection.setImageResource(model.windDirectionIconId());
+        clouds.setText(model.clouds());
     }
 
     @Override

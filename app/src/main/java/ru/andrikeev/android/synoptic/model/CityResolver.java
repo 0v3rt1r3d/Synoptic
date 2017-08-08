@@ -58,12 +58,12 @@ public class CityResolver {
                 .map(weather -> {
                     //todo: cache city
                     City city = City.builder()
-                            .setCityId(weather.getCityId())
+                            .setCityId(weather.cityId())
                             .setCityName("City!!!")
                             .setLastMessage(City.NULL_MESSAGE)
                             .build();
                     cacheService.cacheCity(city);
-                    return weather.getCityId();
+                    return weather.cityId();
                 });
     }
 }

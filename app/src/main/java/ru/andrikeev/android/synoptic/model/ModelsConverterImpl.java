@@ -48,17 +48,20 @@ public class ModelsConverterImpl implements ModelsConverter {
     }
 
     public WeatherModel toViewModel(@NonNull Weather weather) {
-        return new WeatherModel(weather.getCityName(),
-                DateUtils.formatWeatherDate(new Date(weather.getTimestamp())),
-                resolveWeatherIcon(weather.getWeatherId()),
-                weather.getDescription(),
-                getTemperatureString(weather.getTemperature()),
-                getTemperatureUnits(),
-                getPressureString(weather.getPressure()),
-                getHumidityString(weather.getHumidity()),
-                getWindString(weather.getWindSpeed()),
-                resolveWindDirection(weather.getWindDegree()),
-                getCloudsString(weather.getClouds()));
+
+        return WeatherModel.Builder()
+                .setDate(DateUtils.formatWeatherDate(new Date(weather.timestamp())))
+                .setWeatherIconId(resolveWeatherIcon(weather.weatherId()))
+                .setDescription(weather.description())
+                .setTemperature(getTemperatureString(weather.temperature()))
+                .setTemperatureUnits(getTemperatureUnits())
+                .setPressure(getPressureString(weather.pressure()))
+                .setHumidity(getHumidityString(weather.humidity()))
+                .setWindSpeed(getWindString(weather.windSpeed()))
+                .setWindDirectionIconId(resolveWindDirection(weather.windDegree()))
+                .setClouds(getCloudsString(weather.clouds()))
+                .build();
+
     }
 
     private static int resolveWindDirection(float windDegree) {
@@ -151,18 +154,18 @@ public class ModelsConverterImpl implements ModelsConverter {
     }
 
     public Weather toCacheModel(@NonNull WeatherResponse weatherResponse) {
-        return new Weather(
-                weatherResponse.cityId(),
-                weatherResponse.city(),
-                weatherResponse.date() * DATE_FACTOR,
-                weatherResponse.weatherDescription().get(0).id(),
-                weatherResponse.weatherDescription().get(0).description(),
-                weatherResponse.weatherCondition().temperature(),
-                weatherResponse.weatherCondition().pressure(),
-                weatherResponse.weatherCondition().humidity(),
-                weatherResponse.wind().speed(),
-                weatherResponse.wind().degree(),
-                weatherResponse.clouds().percents());
+        return Weather.builder()
+                .setCityId(weatherResponse.cityId())
+                .setDescription(weatherResponse.weatherDescription().get(0).description())
+                .setTimestamp(weatherResponse.timestamp() * DATE_FACTOR)
+                .setWeatherId(weatherResponse.weatherDescription().get(0).id())
+                .setTemperature(weatherResponse.weatherCondition().temperature())
+                .setPressure(weatherResponse.weatherCondition().pressure())
+                .setHumidity(weatherResponse.weatherCondition().humidity())
+                .setWindSpeed(weatherResponse.wind().speed())
+                .setWindDegree(weatherResponse.wind().degree())
+                .setClouds(weatherResponse.clouds().percents())
+                .build();
     }
 
     @Override
@@ -180,7 +183,7 @@ public class ModelsConverterImpl implements ModelsConverter {
                     .setMessage(message)
                     .setCityId(cityId)
                     .setCityName(cityName)
-                    .setDate(dailyForecast.date() * DATE_FACTOR)
+                    .setTimestamp(dailyForecast.date() * DATE_FACTOR)
                     .setDescription(dailyForecast.weather().get(0).description())
                     .setClouds(dailyForecast.clouds())
                     .setWindSpeed(dailyForecast.windSpeed())//todo: rename windspeed
@@ -213,7 +216,7 @@ public class ModelsConverterImpl implements ModelsConverter {
                     .setMessage(message)
                     .setCityName(cityName)
                     .setCityId(cityId)
-                    .setDate(forecast.date() * DATE_FACTOR)
+                    .setTimestamp(forecast.date() * DATE_FACTOR)
                     .setWeatherIconId(forecast.weather().get(0).id())
                     .setDescription(forecast.weather().get(0).description())
                     .setClouds(forecast.clouds().percents())
@@ -241,7 +244,7 @@ public class ModelsConverterImpl implements ModelsConverter {
             items.add(DailyForecastItem.create(
                     resolveWindDirection(forecast.windDegree()),
                     resolveWeatherIcon(forecast.weatherIconId()),
-                    DateUtils.formatDailyForecastDate(new Date(forecast.date())),
+                    DateUtils.formatDailyForecastDate(new Date(forecast.timestamp())),
                     getTemperatureString(forecast.tempDay()),
                     getTemperatureString(forecast.tempNight()),
                     getTemperatureString(forecast.tempEvening()),
@@ -268,7 +271,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         for (Forecast forecast : forecastEntities) {
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
-                    DateUtils.formatWeatherDate(new Date(forecast.date())),
+                    DateUtils.formatWeatherDate(new Date(forecast.timestamp())),
                     forecast.description(),
                     getCloudsString(forecast.clouds()),
                     getWindString(forecast.windSpeed()),

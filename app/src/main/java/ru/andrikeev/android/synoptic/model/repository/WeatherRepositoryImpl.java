@@ -58,7 +58,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     private static boolean shouldFetchWeather(@NonNull Weather weather) {
-        return System.currentTimeMillis() - weather.getTimestamp() > FETCH_MIN_TIMEOUT;
+        return System.currentTimeMillis() - weather.timestamp() > FETCH_MIN_TIMEOUT;
     }
 
     @NonNull
@@ -123,7 +123,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 .map(weatherResponse -> {
                     Timber.d("Weather loaded from api: %s", weatherResponse);
                     Weather weather = converter.toCacheModel(weatherResponse);
-                    settings.setCityId(weather.getCityId());
+                    settings.setCityId(weather.cityId());
                     cacheService.cacheWeather(weather);
                     return weather;
                 });

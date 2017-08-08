@@ -25,7 +25,7 @@ public abstract class DailyForecast implements Persistable {
     public abstract float message();
     public abstract String cityName();
     public abstract long cityId();
-    public abstract long date();
+    public abstract long timestamp();
     public abstract String description();
     public abstract float clouds();
     public abstract float windSpeed();
@@ -48,7 +48,7 @@ public abstract class DailyForecast implements Persistable {
         public abstract Builder setMessage(float message);
         public abstract Builder setCityName(String cityName);
         public abstract Builder setCityId(long cityId);
-        public abstract Builder setDate(long date);
+        public abstract Builder setTimestamp(long timestamp);
         public abstract Builder setDescription(String description);
         public abstract Builder setClouds(float clouds);
         public abstract Builder setWindSpeed(float windSpeed);

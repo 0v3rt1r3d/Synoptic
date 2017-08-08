@@ -37,15 +37,15 @@ public class WeatherDataStore implements CacheService {
 
     @NonNull
     public Single<Weather> getWeather(long cityId) {
-        return dataStore.select(WeatherEntity.class)
-                .where(WeatherEntity.CITY_ID.eq(cityId))
+        return dataStore.select(Weather.class)
+                .where(WeatherType.CITY_ID.eq(cityId))
                 .get()
                 .observable()
                 .subscribeOn(Schedulers.io())
                 .singleOrError()
-                .map(weatherEntity -> {
-                    Timber.d("Weather restored from cache: %s", weatherEntity);
-                    return new Weather(weatherEntity);
+                .map(weather -> {
+                    Timber.d("Weather restored from cache: %s", weather);
+                    return weather;
                 });
     }
 
@@ -102,28 +102,28 @@ public class WeatherDataStore implements CacheService {
 //    }
 
     public void cacheWeather(@NonNull final Weather weather) {
-        Single<WeatherEntity> insertion = dataStore
-                .insert(new WeatherEntity(weather))
+        Single<Weather> insertion = dataStore
+                .insert(weather)
                 .subscribeOn(Schedulers.io());
 
-        dataStore.select(WeatherEntity.class)
-                .where(WeatherEntity.CITY_ID.eq(weather.cityId))
-                .get()
-                .observable()
-                .subscribeOn(Schedulers.single())
-                .singleOrError()
-                .onErrorResumeNext(insertion)
-                .flatMap(new Function<WeatherEntity, SingleSource<WeatherEntity>>() {
-                    @Override
-                    public SingleSource<WeatherEntity> apply(@NonNull WeatherEntity weatherEntity) throws Exception {
-                        updateWeatherEntity(weatherEntity, weather);
-                        return dataStore.update(weatherEntity);
-                    }
-                })
-                .subscribe(
-                        weatherEntity -> Timber.d("Weather cached: %s", weatherEntity),
-                        throwable -> Timber.e(throwable, "Error caching weather")
-                );
+//        dataStore.select(WeatherEntity.class)
+//                .where(WeatherEntity.CITY_ID.eq(weather.cityId))
+//                .get()
+//                .observable()
+//                .subscribeOn(Schedulers.single())
+//                .singleOrError()
+//                .onErrorResumeNext(insertion)
+//                .flatMap(new Function<WeatherEntity, SingleSource<WeatherEntity>>() {
+//                    @Override
+//                    public SingleSource<WeatherEntity> apply(@NonNull WeatherEntity weatherEntity) throws Exception {
+//                        updateWeatherEntity(weatherEntity, weather);
+//                        return dataStore.update(weatherEntity);
+//                    }
+//                })
+//                .subscribe(
+//                        weatherEntity -> Timber.d("Weather cached: %s", weatherEntity),
+//                        throwable -> Timber.e(throwable, "Error caching weather")
+//                );
     }
 
     @Override
@@ -153,18 +153,19 @@ public class WeatherDataStore implements CacheService {
     }
 
 
-    private static void updateWeatherEntity(@NonNull WeatherEntity entity, @NonNull Weather weather) {
-        entity.setCityName(weather.getCityName());
-        entity.setTimestamp(weather.getTimestamp());
-        entity.setWeatherId(weather.getWeatherId());
-        entity.setDescription(weather.getDescription());
-        entity.setTemperature(weather.getTemperature());
-        entity.setPressure(weather.getPressure());
-        entity.setHumidity(weather.getHumidity());
-        entity.setClouds(weather.getClouds());
-        entity.setWindSpeed(weather.getWindSpeed());
-        entity.setWindDegree(weather.getWindDegree());
-    }
+    //todo: replace this method
+//    private static void updateWeatherEntity(@NonNull WeatherEntity entity, @NonNull Weather weather) {
+//        entity.setCityName(weather.getCityName());
+//        entity.setTimestamp(weather.getTimestamp());
+//        entity.setWeatherId(weather.getWeatherId());
+//        entity.setDescription(weather.getDescription());
+//        entity.setTemperature(weather.getTemperature());
+//        entity.setPressure(weather.getPressure());
+//        entity.setHumidity(weather.getHumidity());
+//        entity.setClouds(weather.getClouds());
+//        entity.setWindSpeed(weather.getWindSpeed());
+//        entity.setWindDegree(weather.getWindDegree());
+//    }
 
     public void cacheForecast(@NonNull Forecast forecast) {
         //todo:disposable?
