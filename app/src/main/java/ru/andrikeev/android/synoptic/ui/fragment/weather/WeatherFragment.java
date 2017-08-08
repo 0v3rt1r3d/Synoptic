@@ -21,6 +21,7 @@ import ru.andrikeev.android.synoptic.presentation.presenter.weather.WeatherPrese
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
 import ru.andrikeev.android.synoptic.ui.activity.city.CityActivity;
 import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
+import ru.andrikeev.android.synoptic.utils.IntentHelper;
 
 public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter> implements WeatherView {
 
@@ -75,8 +76,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         clouds = view.findViewById(R.id.clouds);
 
         cityName.setOnClickListener(view1 -> {
-            Intent intent = CityActivity.getIntent(getActivity());
-            startActivityForResult(intent, REQUEST_CITY);
+            IntentHelper.openCityActivity(getActivity(),false);
         });
 
         //todo:remove the listener
@@ -87,6 +87,11 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(() -> presenter.fetchWeather());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -133,12 +138,5 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CITY && resultCode == Activity.RESULT_OK){
-            presenter.fetchWeather();
-        }
     }
 }

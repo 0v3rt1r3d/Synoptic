@@ -1,24 +1,24 @@
 package ru.andrikeev.android.synoptic.model.network.googleplaces.places;
 
+import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by overtired on 25.07.17.
  */
 
-public class PlacesResponse {
+@AutoValue
+public abstract class PlacesResponse {
 
     @SerializedName("status")
-    private String status;
+    public abstract String status();
 
     @SerializedName("result")
-    private Result resultPlace;
+    public abstract Result resultPlace();
 
-    public Result getResultPlace() {
-        return resultPlace;
-    }
-
-    public String getStatus() {
-        return status;
+    public static TypeAdapter<PlacesResponse> typeAdapter(Gson gson){
+        return new AutoValue_PlacesResponse.GsonTypeAdapter(gson);
     }
 }

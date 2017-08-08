@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import io.requery.Entity;
 import io.requery.Key;
+import io.requery.Persistable;
 import io.requery.Table;
 
 /**
@@ -15,9 +16,11 @@ import io.requery.Table;
 @Entity
 @Table(name = "cities")
 @AutoValue
-public abstract class City {
+public abstract class City implements Persistable{
+    public static final float NULL_MESSAGE = 0.0f;
+
     @Key
-    public abstract long id();
+    public abstract long cityId();
     public abstract String cityName();
     public abstract float lastMessage();
 
@@ -27,7 +30,7 @@ public abstract class City {
 
     @AutoValue.Builder
     public static abstract class Builder{
-        public abstract Builder setId(long id);
+        public abstract Builder setCityId(long id);
         public abstract Builder setCityName(@NonNull String cityName);
         public abstract Builder setLastMessage(float message);
         public abstract City build();

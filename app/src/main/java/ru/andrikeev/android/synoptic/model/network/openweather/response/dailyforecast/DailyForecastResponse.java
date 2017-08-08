@@ -29,5 +29,4 @@ public abstract class DailyForecastResponse {
     public static TypeAdapter<DailyForecastResponse> typeAdapter(Gson gson){
         return new AutoValue_DailyForecastResponse.GsonTypeAdapter(gson);
     }
-
 }

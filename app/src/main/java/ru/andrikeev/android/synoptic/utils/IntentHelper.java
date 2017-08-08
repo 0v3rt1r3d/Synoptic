@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import ru.andrikeev.android.synoptic.ui.activity.about.AboutActivity;
+import ru.andrikeev.android.synoptic.ui.activity.city.CityActivity;
 import ru.andrikeev.android.synoptic.ui.activity.main.MainActivity;
 import ru.andrikeev.android.synoptic.ui.activity.settings.SettingsActivity;
 
@@ -25,6 +26,10 @@ public class IntentHelper {
 
     public static void openAboutActivity(@NonNull Context context) {
         context.startActivity(AboutActivity.getIntent(context));
+    }
+
+    public static void openCityActivity(@NonNull Context context, boolean isFirstStart){
+        context.startActivity(CityActivity.getIntent(context,isFirstStart));
     }
 
     public static boolean sendEmail(@NonNull Context context,

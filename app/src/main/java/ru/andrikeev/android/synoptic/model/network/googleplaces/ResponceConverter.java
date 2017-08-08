@@ -17,9 +17,9 @@ public class ResponceConverter {
     public static List<SuggestionModel> toViewModel(@NonNull SuggestionsResponse response){
         List<SuggestionModel> predictions = new ArrayList<>();
 
-        for(Suggestion suggestion :response.getSuggestions()){
-            String name = suggestion.getDescription();
-            String placeId = suggestion.getPlaceId();
+        for(Suggestion suggestion :response.suggestions()){
+            String name = suggestion.description();
+            String placeId = suggestion.placeId();
 
             predictions.add(new SuggestionModel(placeId,name));
         }

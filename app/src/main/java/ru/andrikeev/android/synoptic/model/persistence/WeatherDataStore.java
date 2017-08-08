@@ -81,6 +81,16 @@ public class WeatherDataStore implements CacheService {
                 });
     }
 
+    @Override
+    public Single<City> getCity(long cityId) {
+        return dataStore.select(City.class)
+                .where(CityType.CITY_ID.eq(cityId))
+                .get()
+                .observable()
+                .singleOrError()
+                .subscribeOn(Schedulers.io());
+    }
+
 //    @Override
 //    public Single<List<Forecast>> getForecasts(long cityId) {
 //        return dataStore.select(Forecast.class)
@@ -128,6 +138,18 @@ public class WeatherDataStore implements CacheService {
         for(DailyForecast forecast:forecasts){
             cacheDailyForecast(forecast);
         }
+    }
+
+    @Override
+    public void cacheCity(@NonNull City city) {
+        //todo:disposable?
+        dataStore.insert(city)
+                .subscribeOn(Schedulers.io())
+                .subscribe(city1 -> {
+                }, throwable ->
+                        Timber.d(throwable, "Did not cache city"));
+
+        //todo:check insertion
     }
 
 
