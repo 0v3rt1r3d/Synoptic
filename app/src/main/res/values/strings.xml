@@ -19,6 +19,11 @@
     <string name="weather_wind_mph">%1$d mi/h</string>
     <string name="weather_wind_mps">%1$d m/s</string>
 
+    <string name="forecast_text_day">Day</string>
+    <string name="forecast_text_night">Night</string>
+    <string name="forecast_text_morning">Morning</string>
+    <string name="forecast_text_evening">Evening</string>
+
     <!-- Settings -->
     <string name="pref_activity_title">Settings</string>
     <string name="pref_header_style">Interface</string>

@@ -49,7 +49,7 @@ public class ModelsConverterImpl implements ModelsConverter {
 
     public WeatherModel toViewModel(@NonNull Weather weather) {
         return new WeatherModel(weather.getCityName(),
-                DateUtils.formatDate(new Date(weather.getTimestamp())),
+                DateUtils.formatWeatherDate(new Date(weather.getTimestamp())),
                 resolveWeatherIcon(weather.getWeatherId()),
                 weather.getDescription(),
                 getTemperatureString(weather.getTemperature()),
@@ -241,7 +241,7 @@ public class ModelsConverterImpl implements ModelsConverter {
             items.add(DailyForecastItem.create(
                     resolveWindDirection(forecast.windDegree()),
                     resolveWeatherIcon(forecast.weatherIconId()),
-                    DateUtils.formatDate(new Date(forecast.date())),
+                    DateUtils.formatDailyForecastDate(new Date(forecast.date())),
                     getTemperatureString(forecast.tempDay()),
                     getTemperatureString(forecast.tempNight()),
                     getTemperatureString(forecast.tempEvening()),
@@ -268,7 +268,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         for (Forecast forecast : forecastEntities) {
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
-                    DateUtils.formatDate(new Date(forecast.date())),
+                    DateUtils.formatWeatherDate(new Date(forecast.date())),
                     forecast.description(),
                     getCloudsString(forecast.clouds()),
                     getWindString(forecast.windSpeed()),
