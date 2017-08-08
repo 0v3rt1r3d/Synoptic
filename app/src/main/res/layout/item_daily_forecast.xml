@@ -146,12 +146,12 @@
             android:id="@+id/temperatureDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/text_day"
-            app:layout_constraintLeft_toRightOf="@+id/temperatureMorning"
+            tools:text="25"
             app:layout_constraintRight_toLeftOf="@+id/temperatureEvening"
-            tools:text="25" />
+            app:layout_constraintLeft_toRightOf="@+id/temperatureMorning"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_day" />
 
         <TextView
             android:id="@+id/text_evening"
@@ -166,7 +166,7 @@
 
         <TextView
             android:id="@+id/temperatureEvening"
-            android:layout_width="23dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             tools:text="26"
