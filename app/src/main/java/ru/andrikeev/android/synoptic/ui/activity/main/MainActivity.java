@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity
         if (savedInstanceState == null) {
             WeatherFragment weatherFragment = WeatherFragment.create();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, weatherFragment)
+                    .replace(R.id.fragmentWeather, weatherFragment)
                     .commit();
         }
     }

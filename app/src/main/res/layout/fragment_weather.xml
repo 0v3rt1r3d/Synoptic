@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,33 +19,16 @@
             tools:layout_editor_absoluteY="0dp">
 
             <TextView
-                android:id="@+id/cityName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="0dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="?android:attr/textColorSecondary"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Moscow"/>
-
-
-            <TextView
                 android:id="@+id/lastUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cityName"
-                tools:text="20.07.17 02:30 AM"/>
+                tools:text="20.07.17 02:30 AM"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" />
 
             <ImageView
                 android:id="@+id/weatherIcon"
@@ -74,9 +57,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/temperature"
@@ -130,17 +112,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginTop="0dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="?android:attr/textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/pressureIcon"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/pressureIcon"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/pressureIcon"
-                app:layout_constraintVertical_bias="0.5"
-                tools:text="1000 Па"/>
+                app:layout_constraintVertical_bias="1.0"
+                tools:text="1000 Па" />
 
             <ImageView
                 android:id="@+id/humidityIcon"
@@ -150,7 +129,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pressureIcon"
-                app:srcCompat="@drawable/ic_weather_humidity"/>
+                app:srcCompat="@drawable/ic_weather_humidity" />
 
             <TextView
                 android:id="@+id/humidity"
@@ -158,26 +137,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginTop="0dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="?android:attr/textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/humidityIcon"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/humidityIcon"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/humidityIcon"
-                tools:text="40"/>
+                tools:text="40" />
 
             <ImageView
                 android:id="@+id/windIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/humidityIcon"
-                app:srcCompat="@drawable/ic_weather_wind"/>
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="32dp"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/description"
+                app:srcCompat="@drawable/ic_weather_wind" />
 
             <TextView
                 android:id="@+id/wind"
@@ -212,11 +188,11 @@
                 android:id="@+id/cloudsIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="24dp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline1"
                 app:layout_constraintTop_toBottomOf="@+id/windIcon"
-                app:srcCompat="@drawable/ic_weather_cloud"/>
+                app:srcCompat="@drawable/ic_weather_cloud" />
 
             <TextView
                 android:id="@+id/clouds"
@@ -234,6 +210,14 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/cloudsIcon"
                 tools:text="60%"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintGuide_percent="0.5" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

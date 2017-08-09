@@ -29,14 +29,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment";
 
-    //todo: is it used?
-    public static final String EXTRA_LON = "extra_lon";
-    public static final String EXTRA_LAT = "extra_lat";
-
-    private static final int REQUEST_CITY = 0;
-
     private SwipeRefreshLayout refreshLayout;
-    private TextView cityName;
     private TextView lastUpdate;
     private ImageView weatherIcon;
     private TextView temperature;
@@ -67,7 +60,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
 
-        cityName = view.findViewById(R.id.cityName);
+
         lastUpdate = view.findViewById(R.id.lastUpdate);
         weatherIcon = view.findViewById(R.id.weatherIcon);
         temperature = view.findViewById(R.id.temperature);
@@ -78,10 +71,6 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         wind = view.findViewById(R.id.wind);
         windDirection = view.findViewById(R.id.windDirection);
         clouds = view.findViewById(R.id.clouds);
-
-        cityName.setOnClickListener(view1 -> {
-            IntentHelper.openCityActivity(getActivity(),false);
-        });
 
         //todo:remove the listener
         weatherIcon.setOnClickListener((View v)->{
@@ -114,7 +103,6 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     @Override
     public void showWeather(WeatherModel model) {
-        //cityName.setText(model.getCityName()); // TODO: 08.08.17 cityName?
         lastUpdate.setText(model.date());
         weatherIcon.setImageResource(model.weatherIconId());
         temperature.setText(model.temperature());
