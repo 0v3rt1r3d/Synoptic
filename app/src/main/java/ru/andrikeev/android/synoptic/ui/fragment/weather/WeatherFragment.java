@@ -49,7 +49,6 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setHasOptionsMenu(true);
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(() -> presenter.updateData());

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,7 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.ui.activity.BaseActivity;
+import ru.andrikeev.android.synoptic.ui.fragment.dailyforecast.DailyForecastFragment;
 import ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment;
 import ru.andrikeev.android.synoptic.utils.IntentHelper;
 
@@ -27,7 +29,10 @@ import ru.andrikeev.android.synoptic.utils.IntentHelper;
  * Главный экран приложения.
  */
 public class MainActivity extends BaseActivity
-        implements HasSupportFragmentInjector{
+        implements HasSupportFragmentInjector {
+
+    private MainPagerAdapter adapter;
+    private ViewPager viewPager;
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> injector;
@@ -40,20 +45,27 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(settings.isFirstStart()){
-            IntentHelper.openCityActivity(this,true);
+        if (settings.isFirstStart()) {
+            IntentHelper.openCityActivity(this, true);
         }
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
-            WeatherFragment weatherFragment = WeatherFragment.create();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentWeather, weatherFragment)
-                    .commit();
+        viewPager = (ViewPager) findViewById(R.id.mainViewPager);
+
+        if (viewPager != null) {
+            adapter = new MainPagerAdapter(getSupportFragmentManager());
+            viewPager.setAdapter(adapter);
         }
+
+//        if (savedInstanceState == null) {
+//            WeatherFragment weatherFragment = WeatherFragment.create();
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragmentWeather, weatherFragment)
+//                    .commit();
+//        }
     }
 
     public static Intent getIntent(@NonNull Context context) {
@@ -64,13 +76,13 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_options_main,menu);
+        getMenuInflater().inflate(R.menu.menu_options_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.nav_settings:
                 IntentHelper.openSettingsActivity(this);
                 return true;

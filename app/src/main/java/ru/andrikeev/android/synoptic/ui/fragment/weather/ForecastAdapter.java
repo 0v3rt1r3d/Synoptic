@@ -58,15 +58,14 @@ public class ForecastAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (position == 0) {
             ((WeatherHolder) holder).setWeather(weather);
         } else {
-            ((ForecastHolder) holder).setItem(forecast.items().get(position));
+            ((ForecastHolder) holder).setItem(forecast.items().get(position-1));
         }
-
     }
 
     @Override
     public int getItemCount() {
-        if (forecast != null && forecast.items() != null) {
-            return forecast.items().size();
+        if (forecast != null && forecast.items() != null && weather!=null) {
+            return forecast.items().size()+1;
         }
         return 0;
     }
