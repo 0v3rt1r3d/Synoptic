@@ -111,4 +111,24 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
     private void loadCity(){
         repository.loadCity().subscribe(name -> getViewState().setCity(name));
     }
+
+    public void onResume(){
+        repository.loadForecasts()
+                .subscribe(new SingleObserver<ForecastModel>() {
+                    @Override
+                    public void onSubscribe(Disposable disposable) {
+                        subscription = disposable;
+                    }
+
+                    @Override
+                    public void onSuccess(ForecastModel forecastModel) {
+                        getViewState().setForecast(forecastModel);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getViewState().showError();
+                    }
+                });
+    }
 }

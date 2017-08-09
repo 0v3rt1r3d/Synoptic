@@ -1,11 +1,11 @@
 package ru.andrikeev.android.synoptic.ui.fragment.weather;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,17 +18,19 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import javax.inject.Inject;
 
 import ru.andrikeev.android.synoptic.R;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.presentation.presenter.weather.WeatherPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
-import ru.andrikeev.android.synoptic.ui.activity.city.CityActivity;
 import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
-import ru.andrikeev.android.synoptic.utils.IntentHelper;
 
 public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter> implements WeatherView {
 
     public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment";
 
+    private ForecastAdapter adapter;
+
+    private RecyclerView recycler;
     private SwipeRefreshLayout refreshLayout;
     private TextView lastUpdate;
     private ImageView weatherIcon;
@@ -80,11 +82,19 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(() -> presenter.fetchWeather());
+
+
+
+        adapter = new ForecastAdapter();
+        recycler = view.findViewById(R.id.forecastRecycler);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recycler.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        presenter.onResume();
     }
 
     @Override
@@ -129,6 +139,12 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     public void setCity(@NonNull String city) {
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setTitle(city);
+    }
+
+    @Override
+    public void setForecast(@NonNull ForecastModel forecast) {
+        adapter.setForecast(forecast);
+        adapter.notifyItemRangeChanged(0,forecast.items().size());
     }
 
     public static WeatherFragment create() {

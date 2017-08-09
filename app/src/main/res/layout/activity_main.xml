@@ -21,10 +21,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-        <fragment
-            android:id="@+id/fragmentWeather"
-            android:name="ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <fragment
+        android:id="@+id/fragmentWeather"
+        android:name="ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </android.support.design.widget.CoordinatorLayout>

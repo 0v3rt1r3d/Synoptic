@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.MvpView;
 
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 
 /**
@@ -22,4 +23,6 @@ public interface WeatherView extends MvpView {
     void showFetchingError();
 
     void setCity(@NonNull String cityName);
+
+    void setForecast(@NonNull ForecastModel forecast);
 }

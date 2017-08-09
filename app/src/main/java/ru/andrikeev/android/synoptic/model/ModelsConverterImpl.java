@@ -271,7 +271,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         for (Forecast forecast : forecastEntities) {
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
-                    DateUtils.formatWeatherDate(new Date(forecast.timestamp())),
+                    DateUtils.formatForecastDate(new Date(forecast.timestamp())),
                     forecast.description(),
                     getCloudsString(forecast.clouds()),
                     getWindString(forecast.windSpeed()),

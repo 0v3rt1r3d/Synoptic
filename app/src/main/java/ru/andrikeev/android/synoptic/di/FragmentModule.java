@@ -4,7 +4,6 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import ru.andrikeev.android.synoptic.ui.fragment.city.CityFragment;
 import ru.andrikeev.android.synoptic.ui.fragment.dailyforecast.DailyForecastFragment;
-import ru.andrikeev.android.synoptic.ui.fragment.forecast.ForecastFragment;
 import ru.andrikeev.android.synoptic.ui.fragment.settings.SettingsFragment;
 import ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment;
 
@@ -23,7 +22,4 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract DailyForecastFragment contributeDailyForecastFragment();
-
-    @ContributesAndroidInjector
-    abstract ForecastFragment contributeForecastFragment();
 }

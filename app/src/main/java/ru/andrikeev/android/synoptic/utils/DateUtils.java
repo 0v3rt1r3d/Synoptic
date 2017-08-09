@@ -20,7 +20,7 @@ public class DateUtils {
     }
 
     public static String formatForecastDate(@NonNull Date date){
-        DateFormat dateFormat = new SimpleDateFormat("");
+        DateFormat dateFormat = new SimpleDateFormat("EEEE HH:mm");
         return dateFormat.format(date);
     }
 

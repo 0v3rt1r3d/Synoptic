@@ -41,8 +41,8 @@ public abstract class ForecastItem {
                 clouds,
                 windSpeed,
                 temperature,
-                temperatureUnits,
                 pressure,
-                humidity);
+                humidity,
+                temperatureUnits);
     }
 }
