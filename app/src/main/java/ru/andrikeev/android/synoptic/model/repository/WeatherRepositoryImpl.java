@@ -1,7 +1,6 @@
 package ru.andrikeev.android.synoptic.model.repository;
 
 import android.support.annotation.NonNull;
-import android.util.Pair;
 
 import java.util.List;
 
@@ -38,7 +37,10 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private static final long FETCH_MIN_TIMEOUT = 600_000_000L;
 
     @NonNull
-    private PublishSubject<Resource<WeatherModel>> subject = PublishSubject.create();
+    private PublishSubject<Resource<WeatherModel>> weatherSubject = PublishSubject.create();
+
+    @NonNull
+    private PublishSubject<Resource<ForecastModel>> forecastSubject = PublishSubject.create();
 
     @NonNull
     private OpenWeatherService openWeatherService;
@@ -85,17 +87,19 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                     }
                 })
                 .toObservable()
-                .concatWith(subject)
+                .concatWith(weatherSubject)
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public Single<ForecastModel> loadForecasts() {
+    public Observable<Resource<ForecastModel>> loadForecasts() {
         return cacheService.getForecasts(settings.getCityId(), 0.0f)
                 .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toForecastViewModel(forecasts))
+                .map(Resource::success)
+                .toObservable()
+                .concatWith(forecastSubject)
                 .observeOn(AndroidSchedulers.mainThread());
-
     }
 
     @Override
@@ -127,14 +131,14 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                     if (placesResponse.status().equals(GooglePlacesApi.STATUS_OK)) {
                         Location location = placesResponse.resultPlace().geometry().location();
                         String cityName = placesResponse.resultPlace().address();
-                        return openWeatherService.getWeather(location.latitude(),location.longitude())
+                        return openWeatherService.getWeather(location.latitude(), location.longitude())
                                 .map(converter::toCacheModel)
                                 .doOnSuccess(weather -> {
                                     cacheService.cacheCity(City.builder()
                                             .setCityName(cityName)
                                             .setLastMessage(City.NULL_MESSAGE)
                                             .setCityId(weather.cityId())
-                                    .build());
+                                            .build());
                                 })
                                 .map(weather -> weather.cityId());
                     } else {
@@ -191,11 +195,11 @@ public class WeatherRepositoryImpl implements WeatherRepository {
         loadWeatherRemoteAndSave(settings.getCityId()).subscribe(
                 weather -> {
                     Timber.d("Weather fetched: %s", weather);
-                    subject.onNext(Resource.success(converter.toViewModel(weather)));
+                    weatherSubject.onNext(Resource.success(converter.toViewModel(weather)));
                 },
                 throwable -> {
                     Timber.e(throwable, "Error fetching weather");
-                    subject.onNext(Resource.<WeatherModel>error(throwable));
+                    weatherSubject.onNext(Resource.error(throwable));
                 });
     }
 
@@ -203,11 +207,11 @@ public class WeatherRepositoryImpl implements WeatherRepository {
         loadWeatherRemoteAndSave(lon, lat)
                 .subscribe(weather -> {
                             Timber.d("Weather fetched: %s", weather);
-                            subject.onNext(Resource.success(converter.toViewModel(weather)));
+                            weatherSubject.onNext(Resource.success(converter.toViewModel(weather)));
                         },
                         throwable -> {
                             Timber.e(throwable, "Error fetching weather");
-                            subject.onNext(Resource.error(throwable));
+                            weatherSubject.onNext(Resource.error(throwable));
                         });
     }
 
@@ -224,13 +228,14 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public void fetchForecast() {
         loadForecastRemoteAndSave(settings.getCityId())
                 .subscribe(
-                        forecasts -> Timber.d("Forecasts fetched: %s", forecasts),
-                        throwable -> Timber.e(throwable, "Error fetching forecast")
+                        forecasts -> {
+                            Timber.d("Forecasts fetched: %s", forecasts);
+                            forecastSubject.onNext(Resource.success(converter.toForecastViewModel(forecasts)));
+                        },
+                        throwable -> {
+                            Timber.e(throwable, "Error fetching forecast");
+                            forecastSubject.onNext(Resource.error(throwable));
+                        }
                 );
-//        openWeatherService.getForecast(settings.getCityId())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(forecastResponse ->
-//                                Timber.d("Forecast loaded"),
-//                        Throwable::printStackTrace);
     }
 }

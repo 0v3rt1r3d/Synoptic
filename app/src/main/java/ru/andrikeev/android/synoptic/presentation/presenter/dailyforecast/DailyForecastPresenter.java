@@ -32,7 +32,7 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
                 .subscribe(new SingleObserver<DailyForecastModel>() {
                     @Override
                     public void onSubscribe(Disposable disposable) {
-                        subscription = disposable;
+                        subscriptions.add(disposable);
                     }
 
                     @Override
@@ -48,6 +48,5 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
     }
 
     public void loadDailyForecast(){
-
     }
 }

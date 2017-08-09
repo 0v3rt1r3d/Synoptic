@@ -25,7 +25,7 @@ public interface WeatherRepository {
      * @return {@link Observable} of {@link Resource<WeatherModel>}
      */
     Observable<Resource<WeatherModel>> loadWeather();
-    Single<ForecastModel> loadForecasts();
+    Observable<Resource<ForecastModel>> loadForecasts();
     Single<DailyForecastModel> loadDailyForecast();
     Single<String> loadCity();
 

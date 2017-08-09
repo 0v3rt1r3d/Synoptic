@@ -45,6 +45,13 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         return 0;
     }
 
+    public class WeatherHolder extends RecyclerView.ViewHolder{
+
+        public WeatherHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
     public class ForecastHolder extends RecyclerView.ViewHolder{
         private ForecastItem item;
 

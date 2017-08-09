@@ -19,9 +19,11 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
 import ru.andrikeev.android.synoptic.presentation.presenter.city.CityPresenter;
@@ -60,7 +62,11 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
         adapter = new CityAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        presenter.onTextChanged(RxTextView.textChanges(editText));
+        presenter.onTextChanged(RxTextView
+                .textChanges(editText)
+                .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                .filter(charSequence -> charSequence.length() > 0)
+                .map(CharSequence::toString));
     }
 
     @Override
@@ -77,7 +83,7 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     public void updateList(@NonNull List<SuggestionModel> cities) {
         adapter.clear();
         adapter.add(cities);
-        adapter.notifyItemRangeChanged(0,cities.size());
+        adapter.notifyItemRangeChanged(0, cities.size());
     }
 
     @Override
@@ -124,6 +130,6 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        presenter.onDestroyView();
+        presenter.onDestroy();
     }
 }

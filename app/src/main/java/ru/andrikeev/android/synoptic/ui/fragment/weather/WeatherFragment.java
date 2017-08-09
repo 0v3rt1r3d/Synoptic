@@ -74,16 +74,8 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         windDirection = view.findViewById(R.id.windDirection);
         clouds = view.findViewById(R.id.clouds);
 
-        //todo:remove the listener
-        weatherIcon.setOnClickListener((View v)->{
-            presenter.fetchForecast();
-            presenter.fetchDailyForecast();
-        });
-
         refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(() -> presenter.fetchWeather());
-
-
+        refreshLayout.setOnRefreshListener(() -> presenter.updateData());
 
         adapter = new ForecastAdapter();
         recycler = view.findViewById(R.id.forecastRecycler);
@@ -144,7 +136,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void setForecast(@NonNull ForecastModel forecast) {
         adapter.setForecast(forecast);
-        adapter.notifyItemRangeChanged(0,forecast.items().size());
+        adapter.notifyItemRangeChanged(0, forecast.items().size());
     }
 
     public static WeatherFragment create() {
@@ -152,5 +144,11 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 }

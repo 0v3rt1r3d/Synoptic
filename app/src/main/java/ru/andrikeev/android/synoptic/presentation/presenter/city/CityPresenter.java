@@ -49,7 +49,7 @@ public class CityPresenter extends RxPresenter<CityView> {
         getViewState().showLoading();
         getViewState().hideKeyboard();
 
-        subscription = repository.fetchCity(placeId)
+        Disposable subscription = repository.fetchCity(placeId)
                 .subscribe(cityId -> {
                     settings.setCityId(cityId);
                     settings.setFirstStart(false);
@@ -58,24 +58,14 @@ public class CityPresenter extends RxPresenter<CityView> {
                     getViewState().showError();
                     getViewState().hideLoading();
                 });
+
+        subscriptions.add(subscription);
     }
 
-    public void onTextChanged(Observable<CharSequence> observable) {
-        //// TODO: 08.08.17  leeks
-
-        textChangedSubscription = observable
-                .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .filter(charSequence -> charSequence.length() > 0)
-                .map(CharSequence::toString)
+    public void onTextChanged(Observable<String> observable) {
+        subscriptions.add(observable
                 .subscribe(input -> repository.fetchPredictions(input)
                         .subscribe(suggestionModels -> getViewState().updateList(suggestionModels),
-                                throwable -> getViewState().showError()));
-    }
-
-    public void onDestroyView() {
-        if (textChangedSubscription != null) {
-            textChangedSubscription.dispose();
-            textChangedSubscription = null;
-        }
+                                throwable -> getViewState().showError())));
     }
 }

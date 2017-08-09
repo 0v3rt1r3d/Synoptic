@@ -25,6 +25,8 @@ import timber.log.Timber;
 @InjectViewState
 public class WeatherPresenter extends RxPresenter<WeatherView> {
 
+    private Disposable forecastsSubscription;
+
     private WeatherRepository repository;
 
     @Inject
@@ -39,7 +41,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                         new Observer<Resource<WeatherModel>>() {
                             @Override
                             public void onSubscribe(Disposable disposable) {
-                                subscription = disposable;
+                                subscriptions.add(disposable);
                             }
 
                             @Override
@@ -83,26 +85,26 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
         loadWeather();
     }
 
-    public void fetchDailyForecast(){
-        repository.fetchDailyForecast();
-        repository.loadForecasts()
-                .subscribe(new SingleObserver<ForecastModel>(){
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onSuccess(ForecastModel forecastModel) {
-                        Timber.d("Forecast was restored from storage %s",forecastModel.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.d("Forecast restoring failed");
-                    }
-                });
-    }
+//    public void fetchDailyForecast(){
+//        repository.fetchDailyForecast();
+//        repository.loadForecasts()
+//                .subscribe(new SingleObserver<ForecastModel>(){
+//
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(ForecastModel forecastModel) {
+//                        Timber.d("Forecast was restored from storage %s",forecastModel.toString());
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Timber.d("Forecast restoring failed");
+//                    }
+//                });
+//    }
 
     public void fetchForecast(){
         repository.fetchForecast();
@@ -114,21 +116,39 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
     public void onResume(){
         repository.loadForecasts()
-                .subscribe(new SingleObserver<ForecastModel>() {
+                .subscribe(new Observer<Resource<ForecastModel>>() {
                     @Override
-                    public void onSubscribe(Disposable disposable) {
-                        subscription = disposable;
+                    public void onSubscribe(Disposable d) {
+                        forecastsSubscription = d;
                     }
 
                     @Override
-                    public void onSuccess(ForecastModel forecastModel) {
-                        getViewState().setForecast(forecastModel);
+                    public void onNext(Resource<ForecastModel> forecastModelResource) {
+                        switch (forecastModelResource.getStatus()){
+                            case SUCCESS:
+                                getViewState().hideLoading();
+                                getViewState().setForecast(forecastModelResource.getData());//todo why?
+                                break;
+                            case ERROR:
+                                getViewState().hideLoading();
+                                getViewState().showFetchingError();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        getViewState().hideLoading();
                         getViewState().showError();
                     }
+
+                    @Override
+                    public void onComplete() {
+                    }
                 });
+    }
+
+    public void updateData(){
+        fetchWeather();
+        fetchForecast();
     }
 }
