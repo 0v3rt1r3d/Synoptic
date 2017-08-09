@@ -31,7 +31,7 @@ public interface WeatherRepository {
 
     Single<List<SuggestionModel>> fetchPredictions(@NonNull String input);
 
-    Single<String> fetchCity(@NonNull String placeId);
+    Single<Long> fetchCity(@NonNull String placeId);
 
     void fetchWeather();
     void fetchWeather(double lon, double lat);

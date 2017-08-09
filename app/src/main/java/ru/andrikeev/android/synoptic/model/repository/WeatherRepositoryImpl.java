@@ -119,45 +119,28 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @Override
-    public Single<String> fetchCity(@NonNull String placeId) {
+    public Single<Long> fetchCity(@NonNull String placeId) {
         //todo leaks
-        googlePlacesService.loadPlace(placeId)
+        return googlePlacesService.loadPlace(placeId)
                 .flatMap(placesResponse -> {
                     Timber.d("Status", placesResponse.status());
                     if (placesResponse.status().equals(GooglePlacesApi.STATUS_OK)) {
                         Location location = placesResponse.resultPlace().geometry().location();
                         String cityName = placesResponse.resultPlace().address();
-                        return openWeatherService.getWeather(location.latitude(),location.longitude());
+                        return openWeatherService.getWeather(location.latitude(),location.longitude())
+                                .map(converter::toCacheModel)
+                                .doOnSuccess(weather -> {
+                                    cacheService.cacheCity(City.builder()
+                                            .setCityName(cityName)
+                                            .setLastMessage(City.NULL_MESSAGE)
+                                            .setCityId(weather.cityId())
+                                    .build());
+                                })
+                                .map(weather -> weather.cityId());
                     } else {
                         throw new Exception("Couldn't load this city");
                     }
-                })
-                .doOnSuccess(cacheService.cacheCity(City.builder().setCityName()))
-
-//        return googlePlacesService.loadPlace(placeId)
-//                .map()
-//                .map(locationStringPair -> {
-//                    new Pair<>(
-//                            openWeatherService.getWeather(locationStringPair.first.latitude(),
-//                                    locationStringPair.first.longitude())
-//                                    .subscribe(
-//                                    singleStringPair -> {
-//                                        singleStringPair.first
-//                                                .map(weatherResponse -> converter.toCacheModel(weatherResponse))
-//                                                .doOnSuccess(weather -> {
-//                                                    City city = City.builder()
-//                                                            .setLastMessage(City.NULL_MESSAGE)
-//                                                            .setCityId(weather.cityId())
-//                                                            .setCityName(singleStringPair.second)
-//                                                            .build();
-//                                                    cacheService.cacheCity(city);
-//
-//                                                });
-//                                        return " ";
-//                                    })),
-//                            locationStringPair.second);
-//                });
-
+                });
     }
 
     @NonNull

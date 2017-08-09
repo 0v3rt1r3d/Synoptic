@@ -49,14 +49,14 @@ public class CityPresenter extends RxPresenter<CityView> {
         getViewState().showLoading();
         getViewState().hideKeyboard();
 
-//        subscription = repository.fetchCity(placeId);
-//                .subscribe(cityId -> {
-//                    settings.setCityId(cityId);
-//                    getViewState().hideProgressAndExit();
-//                }, throwable -> {
-//                    getViewState().showError();
-//                    getViewState().hideLoading();
-//                });
+        subscription = repository.fetchCity(placeId)
+                .subscribe(cityId -> {
+                    settings.setCityId(cityId);
+                    getViewState().hideProgressAndExit();
+                }, throwable -> {
+                    getViewState().showError();
+                    getViewState().hideLoading();
+                });
     }
 
     public void onTextChanged(Observable<CharSequence> observable) {
