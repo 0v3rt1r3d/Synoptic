@@ -13,6 +13,7 @@ import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.LongConsumer;
@@ -87,8 +88,9 @@ public class WeatherDataStore implements CacheService {
                 .where(CityType.CITY_ID.eq(cityId))
                 .get()
                 .observable()
-                .singleOrError()
-                .subscribeOn(Schedulers.io());
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .singleOrError();
     }
 
 //    @Override

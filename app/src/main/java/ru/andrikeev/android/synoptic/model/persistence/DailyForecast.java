@@ -18,6 +18,8 @@ import io.requery.Table;
 @Table(name = "daily_forecast")
 @AutoValue
 public abstract class DailyForecast implements Persistable {
+    public static final int NO_ID = -1;
+
     @Key
     @Generated
     public abstract int id();

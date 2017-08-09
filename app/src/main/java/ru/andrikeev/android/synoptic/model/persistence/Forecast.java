@@ -16,6 +16,8 @@ import io.requery.Table;
 @AutoValue
 public abstract class Forecast implements Persistable{
 
+    public static final int NO_ID = -1;
+
     @Key @Generated
     public abstract int id();
 

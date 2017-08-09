@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -23,8 +22,8 @@ import ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesApi;
 import ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherApi;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesService.API_KEY_PLACES;
-import static ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherService.API_KEY_NAME;
+import static ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesServiceImpl.API_KEY_PLACES;
+import static ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherServiceImpl.API_KEY_NAME;
 
 /**
  * Module for network dependencies.

@@ -21,6 +21,7 @@ import io.reactivex.functions.Predicate;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.CityResolver;
 import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
+import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.CityView;
 
@@ -31,16 +32,16 @@ import ru.andrikeev.android.synoptic.presentation.view.CityView;
 @InjectViewState
 public class CityPresenter extends RxPresenter<CityView> {
 
-    private Settings settings;
+    private WeatherRepository repository;
 
-    private CityResolver cityResolver;
+    private Settings settings;
 
     private Disposable textChangedSubscription;
 
     @Inject
-    public CityPresenter(@NonNull CityResolver cityResolver,
+    public CityPresenter(@NonNull WeatherRepository repository,
                          @NonNull Settings settings) {
-        this.cityResolver = cityResolver;
+        this.repository = repository;
         this.settings = settings;
     }
 
@@ -48,22 +49,24 @@ public class CityPresenter extends RxPresenter<CityView> {
         getViewState().showLoading();
         getViewState().hideKeyboard();
 
-        subscription = cityResolver.loadCityId(placeId)
-                .subscribe(cityId -> {
-                    settings.setCityId(cityId);
-                    getViewState().hideProgressAndExit();
-                }, throwable -> {
-                    getViewState().showError();
-                    getViewState().hideLoading();
-                });
+//        subscription = repository.fetchCity(placeId);
+//                .subscribe(cityId -> {
+//                    settings.setCityId(cityId);
+//                    getViewState().hideProgressAndExit();
+//                }, throwable -> {
+//                    getViewState().showError();
+//                    getViewState().hideLoading();
+//                });
     }
 
     public void onTextChanged(Observable<CharSequence> observable) {
+        //// TODO: 08.08.17  leeks
+
         textChangedSubscription = observable
                 .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .filter(charSequence -> charSequence.length() > 0)
-                .map(charSequence -> charSequence.toString())
-                .subscribe(input -> cityResolver.loadPredictions(input)
+                .map(CharSequence::toString)
+                .subscribe(input -> repository.fetchPredictions(input)
                         .subscribe(suggestionModels -> getViewState().updateList(suggestionModels),
                                 throwable -> getViewState().showError()));
     }

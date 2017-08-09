@@ -1,6 +1,7 @@
 package ru.andrikeev.android.synoptic.model.repository;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.List;
 
@@ -9,15 +10,20 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.ModelsConverter;
 import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
 import ru.andrikeev.android.synoptic.model.data.ForecastModel;
+import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
-import ru.andrikeev.android.synoptic.model.network.RemoteService;
+import ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesApi;
+import ru.andrikeev.android.synoptic.model.network.googleplaces.GooglePlacesService;
+import ru.andrikeev.android.synoptic.model.network.googleplaces.ResponceConverter;
+import ru.andrikeev.android.synoptic.model.network.googleplaces.places.Location;
+import ru.andrikeev.android.synoptic.model.network.openweather.OpenWeatherService;
 import ru.andrikeev.android.synoptic.model.persistence.CacheService;
+import ru.andrikeev.android.synoptic.model.persistence.City;
 import ru.andrikeev.android.synoptic.model.persistence.DailyForecast;
 import ru.andrikeev.android.synoptic.model.persistence.Forecast;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
@@ -35,7 +41,10 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private PublishSubject<Resource<WeatherModel>> subject = PublishSubject.create();
 
     @NonNull
-    private RemoteService remoteService;
+    private OpenWeatherService openWeatherService;
+
+    @NonNull
+    private GooglePlacesService googlePlacesService;
 
     @NonNull
     private ModelsConverter converter;
@@ -47,11 +56,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private Settings settings;
 
     @Inject
-    WeatherRepositoryImpl(@NonNull RemoteService remoteService,
+    WeatherRepositoryImpl(@NonNull GooglePlacesService googlePlacesService,
+                          @NonNull OpenWeatherService openWeatherService,
                           @NonNull CacheService cacheService,
                           @NonNull ModelsConverter converter,
                           @NonNull Settings settings) {
-        this.remoteService = remoteService;
+        this.googlePlacesService = googlePlacesService;
+        this.openWeatherService = openWeatherService;
         this.cacheService = cacheService;
         this.converter = converter;
         this.settings = settings;
@@ -80,7 +91,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @Override
     public Single<ForecastModel> loadForecasts() {
-        return cacheService.getForecasts(settings.getCityId(),0.0f)
+        return cacheService.getForecasts(settings.getCityId(), 0.0f)
                 .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toForecastViewModel(forecasts))
                 .observeOn(AndroidSchedulers.mainThread());
@@ -89,15 +100,69 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @Override
     public Single<DailyForecastModel> loadDailyForecast() {
-        return cacheService.getDailyForecasts(settings.getCityId(),0.0f)
+        return cacheService.getDailyForecasts(settings.getCityId(), 0.0f)
                 .onErrorResumeNext(loadDailyForecastAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toDailyForecastViewModel(forecasts))
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    @Override
+    public Single<String> loadCity() {
+        return cacheService.getCity(settings.getCityId())
+                .map(City::cityName);
+    }
+
+    @Override
+    public Single<List<SuggestionModel>> fetchPredictions(@NonNull String input) {
+        return googlePlacesService.loadPredictions(input)
+                .map(ResponceConverter::toViewModel);
+    }
+
+    @Override
+    public Single<String> fetchCity(@NonNull String placeId) {
+        //todo leaks
+        googlePlacesService.loadPlace(placeId)
+                .flatMap(placesResponse -> {
+                    Timber.d("Status", placesResponse.status());
+                    if (placesResponse.status().equals(GooglePlacesApi.STATUS_OK)) {
+                        Location location = placesResponse.resultPlace().geometry().location();
+                        String cityName = placesResponse.resultPlace().address();
+                        return openWeatherService.getWeather(location.latitude(),location.longitude());
+                    } else {
+                        throw new Exception("Couldn't load this city");
+                    }
+                })
+                .doOnSuccess(cacheService.cacheCity(City.builder().setCityName()))
+
+//        return googlePlacesService.loadPlace(placeId)
+//                .map()
+//                .map(locationStringPair -> {
+//                    new Pair<>(
+//                            openWeatherService.getWeather(locationStringPair.first.latitude(),
+//                                    locationStringPair.first.longitude())
+//                                    .subscribe(
+//                                    singleStringPair -> {
+//                                        singleStringPair.first
+//                                                .map(weatherResponse -> converter.toCacheModel(weatherResponse))
+//                                                .doOnSuccess(weather -> {
+//                                                    City city = City.builder()
+//                                                            .setLastMessage(City.NULL_MESSAGE)
+//                                                            .setCityId(weather.cityId())
+//                                                            .setCityName(singleStringPair.second)
+//                                                            .build();
+//                                                    cacheService.cacheCity(city);
+//
+//                                                });
+//                                        return " ";
+//                                    })),
+//                            locationStringPair.second);
+//                });
+
+    }
+
     @NonNull
     private Single<Weather> loadWeatherRemoteAndSave(long cityId) {
-        return remoteService.getWeather(cityId)
+        return openWeatherService.getWeather(cityId)
                 .map(weatherResponse -> {
                     Timber.d("Weather loaded from api: %s", weatherResponse);
                     Weather weather = converter.toCacheModel(weatherResponse);
@@ -108,9 +173,9 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @NonNull
     private Single<List<Forecast>> loadForecastRemoteAndSave(long cityId) {
-        return remoteService.getForecast(cityId)
+        return openWeatherService.getForecast(cityId)
                 .map(forecastResponse -> {
-                    Timber.d("Forecast loaded from api: %s",forecastResponse);
+                    Timber.d("Forecast loaded from api: %s", forecastResponse);
                     List<Forecast> forecasts = converter.toForecastCacheModel(forecastResponse);
                     cacheService.cacheForecasts(forecasts);
                     return forecasts;
@@ -119,7 +184,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @NonNull
     private Single<Weather> loadWeatherRemoteAndSave(double lon, double lat) {
-        return remoteService.getWeather(lat, lon)
+        return openWeatherService.getWeather(lat, lon)
                 .map(weatherResponse -> {
                     Timber.d("Weather loaded from api: %s", weatherResponse);
                     Weather weather = converter.toCacheModel(weatherResponse);
@@ -129,10 +194,10 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 });
     }
 
-    private Single<List<DailyForecast>> loadDailyForecastAndSave(long cityId){
-        return remoteService.getDailyForecast(cityId,16)//todo: count
+    private Single<List<DailyForecast>> loadDailyForecastAndSave(long cityId) {
+        return openWeatherService.getDailyForecast(cityId, 16)//todo: count
                 .map(dailyForecastResponse -> {
-                    Timber.d("Forecast loaded from api: %s",dailyForecastResponse);
+                    Timber.d("Forecast loaded from api: %s", dailyForecastResponse);
                     List<DailyForecast> forecasts = converter.toDailyForecastCacheModel(dailyForecastResponse);
                     cacheService.cacheDailyForecasts(forecasts);
                     return forecasts;
@@ -167,8 +232,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public void fetchDailyForecast() {
         loadDailyForecastAndSave(settings.getCityId())
                 .subscribe(
-                        dailyForecasts -> Timber.d("Forecasts fetched: %s",dailyForecasts),
-                        throwable -> Timber.e(throwable,"Error fetching forecast")
+                        dailyForecasts -> Timber.d("Forecasts fetched: %s", dailyForecasts),
+                        throwable -> Timber.e(throwable, "Error fetching forecast")
                 );
     }
 
@@ -176,10 +241,10 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public void fetchForecast() {
         loadForecastRemoteAndSave(settings.getCityId())
                 .subscribe(
-                        forecasts -> Timber.d("Forecasts fetched: %s",forecasts),
-                        throwable -> Timber.e(throwable,"Error fetching forecast")
+                        forecasts -> Timber.d("Forecasts fetched: %s", forecasts),
+                        throwable -> Timber.e(throwable, "Error fetching forecast")
                 );
-//        remoteService.getForecast(settings.getCityId())
+//        openWeatherService.getForecast(settings.getCityId())
 //                .subscribeOn(Schedulers.io())
 //                .subscribe(forecastResponse ->
 //                                Timber.d("Forecast loaded"),
