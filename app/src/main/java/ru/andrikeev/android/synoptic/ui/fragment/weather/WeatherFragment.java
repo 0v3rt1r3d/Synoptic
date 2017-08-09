@@ -8,8 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -32,16 +30,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     private RecyclerView recycler;
     private SwipeRefreshLayout refreshLayout;
-    private TextView lastUpdate;
-    private ImageView weatherIcon;
-    private TextView temperature;
-    private TextView temperatureUnits;
-    private TextView description;
-    private TextView pressure;
-    private TextView humidity;
-    private TextView wind;
-    private ImageView windDirection;
-    private TextView clouds;
+
 
     @Inject
     @InjectPresenter
@@ -62,23 +51,11 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
 
-
-        lastUpdate = view.findViewById(R.id.lastUpdate);
-        weatherIcon = view.findViewById(R.id.weatherIcon);
-        temperature = view.findViewById(R.id.temperature);
-        temperatureUnits = view.findViewById(R.id.temperatureUnits);
-        description = view.findViewById(R.id.description);
-        pressure = view.findViewById(R.id.pressure);
-        humidity = view.findViewById(R.id.humidity);
-        wind = view.findViewById(R.id.wind);
-        windDirection = view.findViewById(R.id.windDirection);
-        clouds = view.findViewById(R.id.clouds);
-
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(() -> presenter.updateData());
 
         adapter = new ForecastAdapter();
-        recycler = view.findViewById(R.id.forecastRecycler);
+        recycler = view.findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         recycler.setAdapter(adapter);
     }
@@ -105,16 +82,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     @Override
     public void showWeather(WeatherModel model) {
-        lastUpdate.setText(model.date());
-        weatherIcon.setImageResource(model.weatherIconId());
-        temperature.setText(model.temperature());
-        temperatureUnits.setText(model.temperatureUnits());
-        description.setText(model.description());
-        pressure.setText(model.pressure());
-        humidity.setText(model.humidity());
-        wind.setText(model.windSpeed());
-        windDirection.setImageResource(model.windDirectionIconId());
-        clouds.setText(model.clouds());
+        adapter.setWeather(model);
     }
 
     @Override

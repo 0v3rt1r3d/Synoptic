@@ -11,48 +11,122 @@ import android.widget.TextView;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.model.data.ForecastItem;
 import ru.andrikeev.android.synoptic.model.data.ForecastModel;
+import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 
 /**
  * Created by overtired on 07.08.17.
  */
 
-public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastHolder>{
+public class ForecastAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ForecastModel forecast;
+    private WeatherModel weather;
 
-    public void setForecast(@NonNull ForecastModel forecast){
+    public void setForecast(@NonNull ForecastModel forecast) {
         this.forecast = forecast;
-        //todo: set cityName
+    }
+
+    public void setWeather(@NonNull WeatherModel weather) {
+        this.weather = weather;
     }
 
     @Override
-    public ForecastHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return WeatherHolder.VIEW_TYPE;
+        } else {
+            return ForecastHolder.VIEW_TYPE;
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_forecast,parent,false);
-        return new ForecastHolder(view);
+        View view;
+        switch (viewType) {
+            case WeatherHolder.VIEW_TYPE:
+                view = inflater.inflate(R.layout.item_weather, parent, false);
+                return new WeatherHolder(view);
+            default:
+                view = inflater.inflate(R.layout.item_forecast, parent, false);
+                return new ForecastHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(ForecastHolder holder, int position) {
-        holder.setItem(forecast.items().get(position));
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (position == 0) {
+            ((WeatherHolder) holder).setWeather(weather);
+        } else {
+            ((ForecastHolder) holder).setItem(forecast.items().get(position));
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        if(forecast!=null && forecast.items()!=null){
+        if (forecast != null && forecast.items() != null) {
             return forecast.items().size();
         }
         return 0;
     }
 
-    public class WeatherHolder extends RecyclerView.ViewHolder{
+    public class WeatherHolder extends RecyclerView.ViewHolder {
 
-        public WeatherHolder(View itemView) {
-            super(itemView);
+        public static final int VIEW_TYPE = 0;
+
+        private WeatherModel model;
+
+        private TextView lastUpdate;
+        private ImageView weatherIcon;
+        private TextView temperature;
+        private TextView temperatureUnits;
+        private TextView description;
+        private TextView pressure;
+        private TextView humidity;
+        private TextView wind;
+        private ImageView windDirection;
+        private TextView clouds;
+
+        public WeatherHolder(View view) {
+            super(view);
+            lastUpdate = view.findViewById(R.id.lastUpdate);
+            weatherIcon = view.findViewById(R.id.weatherIcon);
+            temperature = view.findViewById(R.id.temperature);
+            temperatureUnits = view.findViewById(R.id.temperatureUnits);
+            description = view.findViewById(R.id.description);
+            pressure = view.findViewById(R.id.pressure);
+            humidity = view.findViewById(R.id.humidity);
+            wind = view.findViewById(R.id.wind);
+            windDirection = view.findViewById(R.id.windDirection);
+            clouds = view.findViewById(R.id.clouds);
+        }
+
+        public void setWeather(@NonNull WeatherModel model) {
+            this.model = model;
+            update();
+        }
+
+        private void update() {
+            if (forecast != null && weather != null) {
+
+                lastUpdate.setText(model.date());
+                weatherIcon.setImageResource(model.weatherIconId());
+                temperature.setText(model.temperature());
+                temperatureUnits.setText(model.temperatureUnits());
+                description.setText(model.description());
+                pressure.setText(model.pressure());
+                humidity.setText(model.humidity());
+                wind.setText(model.windSpeed());
+                windDirection.setImageResource(model.windDirectionIconId());
+                clouds.setText(model.clouds());
+            }
         }
     }
 
-    public class ForecastHolder extends RecyclerView.ViewHolder{
+    public class ForecastHolder extends RecyclerView.ViewHolder {
+        public static final int VIEW_TYPE = 1;
+
         private ForecastItem item;
 
         private TextView temperature;
@@ -62,12 +136,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
         private ImageView weatherIcon;
 
-        public void setItem(@NonNull ForecastItem item){
+        public void setItem(@NonNull ForecastItem item) {
             this.item = item;
             updateHolder();
         }
 
-        private void updateHolder(){
+        private void updateHolder() {
             temperature.setText(item.temperature());
             temperatureUnits.setText(item.temperatureUnits());
             date.setText(item.date());
