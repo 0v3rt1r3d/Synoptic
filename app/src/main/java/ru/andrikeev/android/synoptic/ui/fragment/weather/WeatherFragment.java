@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,6 +65,8 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
+
         cityName = view.findViewById(R.id.cityName);
         lastUpdate = view.findViewById(R.id.lastUpdate);
         weatherIcon = view.findViewById(R.id.weatherIcon);
@@ -136,7 +139,8 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     @Override
     public void setCity(@NonNull String city) {
-        cityName.setText(city);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(city);
     }
 
     public static WeatherFragment create() {

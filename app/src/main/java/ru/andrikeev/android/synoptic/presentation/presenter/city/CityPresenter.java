@@ -52,6 +52,7 @@ public class CityPresenter extends RxPresenter<CityView> {
         subscription = repository.fetchCity(placeId)
                 .subscribe(cityId -> {
                     settings.setCityId(cityId);
+                    settings.setFirstStart(false);
                     getViewState().hideProgressAndExit();
                 }, throwable -> {
                     getViewState().showError();
