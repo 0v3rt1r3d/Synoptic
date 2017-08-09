@@ -3,6 +3,7 @@ package ru.andrikeev.android.synoptic.ui.fragment.dailyforecast;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,6 +28,7 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
         implements DailyForecastView{
     public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.dailyforecast.DailyForecastFragment";
 
+    private SwipeRefreshLayout refreshLayout;
     private DailyForecastAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -35,10 +37,14 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
         super.onViewCreated(view, savedInstanceState);
         adapter = new DailyForecastAdapter();
 
-
         recyclerView = view.findViewById(R.id.recyclerDailyForecast);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+
+        refreshLayout = view.findViewById(R.id.refreshLayout);
+        refreshLayout.setOnRefreshListener(()->{
+            refreshLayout.setRefreshing(false);
+        });
     }
 
     @Override

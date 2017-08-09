@@ -3,6 +3,7 @@ package ru.andrikeev.android.synoptic.ui.fragment.weather;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -131,6 +132,11 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void showFetchingError() {
         Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show(); // TODO: show error
+    }
+
+    @Override
+    public void setCity(@NonNull String city) {
+        cityName.setText(city);
     }
 
     public static WeatherFragment create() {

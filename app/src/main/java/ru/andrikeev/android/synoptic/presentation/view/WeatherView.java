@@ -1,5 +1,7 @@
 package ru.andrikeev.android.synoptic.presentation.view;
 
+import android.support.annotation.NonNull;
+
 import com.arellomobile.mvp.MvpView;
 
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
@@ -18,4 +20,6 @@ public interface WeatherView extends MvpView {
     void showError();
 
     void showFetchingError();
+
+    void setCity(@NonNull String cityName);
 }

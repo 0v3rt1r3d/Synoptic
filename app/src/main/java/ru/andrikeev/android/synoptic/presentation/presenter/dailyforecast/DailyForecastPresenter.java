@@ -46,4 +46,8 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
                     }
                 });
     }
+
+    public void loadDailyForecast(){
+
+    }
 }

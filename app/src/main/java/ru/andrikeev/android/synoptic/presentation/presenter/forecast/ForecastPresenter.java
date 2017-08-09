@@ -46,8 +46,4 @@ public class ForecastPresenter extends RxPresenter<ForecastView>{
                     }
                 });
     }
-
-    public void loadForecast(){
-
-    }
 }

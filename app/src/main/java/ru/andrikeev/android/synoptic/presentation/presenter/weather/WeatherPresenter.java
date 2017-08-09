@@ -48,6 +48,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                                     case SUCCESS:
                                         getViewState().hideLoading();
                                         getViewState().showWeather(resource.getData());
+                                        loadCity();
                                         break;
                                     case FETCHING:
                                         getViewState().showWeather(resource.getData());
@@ -105,5 +106,9 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
     public void fetchForecast(){
         repository.fetchForecast();
+    }
+
+    private void loadCity(){
+        repository.loadCity().subscribe(name -> getViewState().setCity(name));
     }
 }
