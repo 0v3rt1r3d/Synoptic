@@ -129,6 +129,11 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @Override
+    public Single<List<City>> loadCachedCities() {
+        return cacheService.getCities();
+    }
+
+    @Override
     public Single<Long> fetchCity(@NonNull String placeId) {
         //todo leaks
         return googlePlacesService.loadPlace(placeId)

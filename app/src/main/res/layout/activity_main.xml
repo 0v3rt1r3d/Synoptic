@@ -33,7 +33,7 @@
         android:layout_centerHorizontal="true"
         android:layout_weight="1"
         app:dotsColor="@color/colorPrimary"
-        app:dotsSize="16dp"
+        app:dotsSize="8dp"
         app:dotsWidthFactor="3" />
 
 </LinearLayout>

@@ -21,6 +21,7 @@ public interface CacheService {
     Single<List<Forecast>> getForecasts(long cityId, float message);
     Single<List<DailyForecast>> getDailyForecasts(long cityId, float message);
     Single<City> getCity(long cityId);
+    Single<List<City>> getCities();
 
 //    Single<List<Forecast>> getForecasts(long cityId);
 

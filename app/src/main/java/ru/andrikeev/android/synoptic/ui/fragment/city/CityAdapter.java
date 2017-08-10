@@ -13,54 +13,81 @@ import java.util.List;
 
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
-import ru.andrikeev.android.synoptic.presentation.presenter.city.CityPresenter;
+import ru.andrikeev.android.synoptic.model.persistence.City;
 
 /**
  * Created by overtired on 28.07.17.
  */
 
-public class CityAdapter extends Adapter<CityAdapter.CityHolder>{
+public class CityAdapter extends Adapter<RecyclerView.ViewHolder>{
 
-    private List<SuggestionModel> cities;
+    private List<SuggestionModel> suggestions;
+    private List<City> cities;
     private OnCityClickListener listener;
 
     public CityAdapter(@NonNull OnCityClickListener listener){
         this.cities = new ArrayList<>();
+        this.suggestions = new ArrayList<>();
         this.listener = listener;
     }
 
-    public void add(@NonNull List<SuggestionModel> cities){
+    public void addCities(@NonNull List<City> cities){
         this.cities.addAll(cities);
+    }
+
+    public void addSuggestions(@NonNull List<SuggestionModel> suggestions){
+        this.suggestions.addAll(suggestions);
     }
 
     public void clear(){
         this.cities.clear();
+        this.suggestions.clear();
     }
 
     @Override
-    public CityHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.item_city,parent,false);
-        return new CityHolder(v,listener);
+
+        if(viewType==CityHolder.VIEW_TYPE){
+            return new CityHolder(v);
+        }else {
+            return new SuggestionHolder(v,listener);
+        }
     }
 
     @Override
-    public void onBindViewHolder(CityHolder holder, int position) {
-        holder.setCity(cities.get(position));
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(position<cities.size()){
+            ((CityHolder)holder).setCity(cities.get(position));
+        }else {
+            ((SuggestionHolder)holder).setCity(suggestions.get(cities.size()+position));
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position<cities.size()){
+            return CityHolder.VIEW_TYPE;
+        }else {
+            return SuggestionHolder.VIEW_TYPE;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return cities.size();
+        return cities.size()+suggestions.size();
     }
 
-    public class CityHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class SuggestionHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        public static final int VIEW_TYPE = 0;
 
         private SuggestionModel city;
         private OnCityClickListener listener;
         private TextView textView;
 
-        public CityHolder(View view, OnCityClickListener listener){
+        public SuggestionHolder(View view, OnCityClickListener listener){
             super(view);
             this.textView = view.findViewById(R.id.city_text);
             this.listener = listener;
@@ -68,12 +95,8 @@ public class CityAdapter extends Adapter<CityAdapter.CityHolder>{
             view.setOnClickListener(this);
         }
 
-        public void setCity(SuggestionModel city){
+        public void setCity(@NonNull SuggestionModel city){
             this.city = city;
-            updateHolder();
-        }
-
-        private void updateHolder(){
             textView.setText(city.getName());
         }
 
@@ -81,5 +104,24 @@ public class CityAdapter extends Adapter<CityAdapter.CityHolder>{
         public void onClick(View view) {
             listener.onCityClick(city);
         }
+    }
+
+    public class CityHolder extends RecyclerView.ViewHolder{
+
+        public static final int VIEW_TYPE = 1;
+
+        private City city;
+        private TextView textView;
+
+        public CityHolder(View itemView) {
+            super(itemView);
+            this.textView = itemView.findViewById(R.id.city_text);
+        }
+
+        public void setCity(@NonNull City city){
+            this.city = city;
+            textView.setText(city.cityName());
+        }
+
     }
 }

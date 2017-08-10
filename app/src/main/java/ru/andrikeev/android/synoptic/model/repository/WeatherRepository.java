@@ -30,6 +30,7 @@ public interface WeatherRepository {
     Single<String> loadCity();
 
     Single<List<SuggestionModel>> fetchPredictions(@NonNull String input);
+    Single<List<City>> loadCachedCities();
 
     Single<Long> fetchCity(@NonNull String placeId);
 

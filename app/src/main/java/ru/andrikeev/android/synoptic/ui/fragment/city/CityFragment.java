@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
+import ru.andrikeev.android.synoptic.model.persistence.City;
 import ru.andrikeev.android.synoptic.presentation.presenter.city.CityPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.CityView;
 import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
@@ -65,7 +66,6 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
         presenter.onTextChanged(RxTextView
                 .textChanges(editText)
                 .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .filter(charSequence -> charSequence.length() > 0)
                 .map(CharSequence::toString));
     }
 
@@ -80,10 +80,19 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     }
 
     @Override
-    public void updateList(@NonNull List<SuggestionModel> cities) {
+    public void setSuggestions(@NonNull List<SuggestionModel> cities) {
         adapter.clear();
-        adapter.add(cities);
+        adapter.notifyDataSetChanged();
+        adapter.addSuggestions(cities);
         adapter.notifyItemRangeChanged(0, cities.size());
+    }
+
+    @Override
+    public void setCities(@NonNull List<City> cities) {
+        adapter.clear();
+        adapter.notifyDataSetChanged();
+        adapter.addCities(cities);
+        adapter.notifyItemRangeChanged(0,cities.size());
     }
 
     @Override

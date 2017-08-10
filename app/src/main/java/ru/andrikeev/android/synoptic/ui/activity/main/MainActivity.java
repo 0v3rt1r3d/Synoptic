@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(view -> IntentHelper.openCityActivity(this,false));
         setSupportActionBar(toolbar);
 
         viewPager = (ViewPager) findViewById(R.id.mainViewPager);
