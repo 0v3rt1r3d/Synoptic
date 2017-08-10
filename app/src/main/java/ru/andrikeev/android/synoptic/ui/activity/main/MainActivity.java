@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
@@ -33,6 +35,7 @@ public class MainActivity extends BaseActivity
 
     private MainPagerAdapter adapter;
     private ViewPager viewPager;
+    private DotsIndicator dots;
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> injector;
@@ -58,6 +61,9 @@ public class MainActivity extends BaseActivity
         if (viewPager != null) {
             adapter = new MainPagerAdapter(getSupportFragmentManager());
             viewPager.setAdapter(adapter);
+
+            dots= (DotsIndicator) findViewById(R.id.dots_indicator);
+            dots.setViewPager(viewPager);
         }
 
 //        if (savedInstanceState == null) {
