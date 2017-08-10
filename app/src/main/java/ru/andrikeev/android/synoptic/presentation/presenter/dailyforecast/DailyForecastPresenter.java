@@ -6,9 +6,11 @@ import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observer;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
+import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.DailyForecastView;
@@ -28,25 +30,41 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
     }
 
     public void onResume(){
+        //todo: leaks
         repository.loadDailyForecast()
-                .subscribe(new SingleObserver<DailyForecastModel>() {
+                .subscribe(new Observer<Resource<DailyForecastModel>>() {
                     @Override
-                    public void onSubscribe(Disposable disposable) {
-                        subscriptions.add(disposable);
+                    public void onSubscribe(Disposable d) {
+                        //// TODO: 09.08.17 will dispose?
+                        subscriptions.add(d);
                     }
 
                     @Override
-                    public void onSuccess(DailyForecastModel model) {
-                        getViewState().setDailyForecast(model);
+                    public void onNext(Resource<DailyForecastModel> resource) {
+                        switch (resource.getStatus()){
+                            case SUCCESS:
+                                getViewState().hideLoading();
+                                getViewState().setDailyForecast(resource.getData());
+                                break;
+                            case ERROR:
+                                getViewState().showFetchingError();
+                                getViewState().hideLoading();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         getViewState().showError();
+                        getViewState().hideLoading();
+                    }
+
+                    @Override
+                    public void onComplete() {
                     }
                 });
     }
 
     public void loadDailyForecast(){
+        repository.fetchDailyForecast();
     }
 }

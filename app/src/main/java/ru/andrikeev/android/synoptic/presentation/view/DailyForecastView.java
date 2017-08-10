@@ -13,4 +13,7 @@ import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
 public interface DailyForecastView extends MvpView {
     void setDailyForecast(@NonNull DailyForecastModel model);
     void showError();
+    void showFetchingError();
+    void showLoading();
+    void hideLoading();
 }

@@ -42,9 +42,7 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
         recyclerView.setAdapter(adapter);
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(()->{
-            refreshLayout.setRefreshing(false);
-        });
+        refreshLayout.setOnRefreshListener(()->presenter.loadDailyForecast());
     }
 
     @Override
@@ -63,6 +61,21 @@ public class DailyForecastFragment extends BaseFragment<DailyForecastView, Daily
     @Override
     public void showError() {
         Toast.makeText(getActivity(),"Error!",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showFetchingError() {
+        Toast.makeText(getActivity(),"Error!",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLoading() {
+        refreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void hideLoading() {
+        refreshLayout.setRefreshing(false);
     }
 
     @Inject

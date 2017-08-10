@@ -13,16 +13,10 @@ import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 public interface WeatherView extends MvpView {
 
     void showLoading();
-
     void hideLoading();
-
-    void showWeather(WeatherModel model);
-
+    void setWeather(WeatherModel model);
     void showError();
-
     void showFetchingError();
-
     void setCity(@NonNull String cityName);
-
     void setForecast(@NonNull ForecastModel forecast);
 }

@@ -52,7 +52,7 @@ public class WeatherPresenterTest {
 
         verify(view, times(1)).showLoading();
         verify(view, times(1)).hideLoading();
-        verify(view, times(1)).showWeather(model);
+        verify(view, times(1)).setWeather(model);
         verify(view, times(0)).showFetchingError();
         verify(view, times(0)).showError();
     }
@@ -75,7 +75,7 @@ public class WeatherPresenterTest {
 
         verify(view, times(1)).showLoading();
         verify(view, times(0)).hideLoading();
-        verify(view, times(1)).showWeather(any(WeatherModel.class));
+        verify(view, times(1)).setWeather(any(WeatherModel.class));
         verify(view, times(0)).showFetchingError();
         verify(view, times(0)).showError();
     }
@@ -95,7 +95,7 @@ public class WeatherPresenterTest {
 
         verify(view, times(1)).showLoading();
         verify(view, times(1)).hideLoading();
-        verify(view, times(0)).showWeather(any(WeatherModel.class));
+        verify(view, times(0)).setWeather(any(WeatherModel.class));
         verify(view, times(1)).showFetchingError();
         verify(view, times(0)).showError();
     }

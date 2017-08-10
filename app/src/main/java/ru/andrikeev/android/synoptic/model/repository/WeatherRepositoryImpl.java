@@ -43,6 +43,9 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private PublishSubject<Resource<ForecastModel>> forecastSubject = PublishSubject.create();
 
     @NonNull
+    private PublishSubject<Resource<DailyForecastModel>> dailyForecastSubject = PublishSubject.create();
+
+    @NonNull
     private OpenWeatherService openWeatherService;
 
     @NonNull
@@ -103,10 +106,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @Override
-    public Single<DailyForecastModel> loadDailyForecast() {
+    public Observable<Resource<DailyForecastModel>> loadDailyForecast() {
         return cacheService.getDailyForecasts(settings.getCityId(), 0.0f)
                 .onErrorResumeNext(loadDailyForecastAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toDailyForecastViewModel(forecasts))
+                .map(Resource::success)
+                .toObservable()
+                .concatWith(dailyForecastSubject)
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -219,8 +225,15 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public void fetchDailyForecast() {
         loadDailyForecastAndSave(settings.getCityId())
                 .subscribe(
-                        dailyForecasts -> Timber.d("Forecasts fetched: %s", dailyForecasts),
-                        throwable -> Timber.e(throwable, "Error fetching forecast")
+                        dailyForecasts -> {
+                            Timber.d("Forecasts fetched: %s", dailyForecasts);
+                            dailyForecastSubject.onNext(Resource.success(
+                                    converter.toDailyForecastViewModel(dailyForecasts)));
+                        },
+                        throwable -> {
+                            Timber.e(throwable, "Error fetching forecast");
+                            dailyForecastSubject.onNext(Resource.error(throwable));
+                        }
                 );
     }
 

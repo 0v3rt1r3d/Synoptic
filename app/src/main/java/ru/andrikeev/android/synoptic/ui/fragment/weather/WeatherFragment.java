@@ -80,7 +80,7 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     }
 
     @Override
-    public void showWeather(WeatherModel model) {
+    public void setWeather(WeatherModel model) {
         adapter.setWeather(model);
     }
 

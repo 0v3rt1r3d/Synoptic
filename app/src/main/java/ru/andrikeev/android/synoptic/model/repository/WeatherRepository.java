@@ -26,7 +26,7 @@ public interface WeatherRepository {
      */
     Observable<Resource<WeatherModel>> loadWeather();
     Observable<Resource<ForecastModel>> loadForecasts();
-    Single<DailyForecastModel> loadDailyForecast();
+    Observable<Resource<DailyForecastModel>> loadDailyForecast();
     Single<String> loadCity();
 
     Single<List<SuggestionModel>> fetchPredictions(@NonNull String input);
