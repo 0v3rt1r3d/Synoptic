@@ -18,24 +18,24 @@ import ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
+    private List<Fragment> fragments;
+
+    public void setFragments(@NonNull List<Fragment> fragments) {
+        this.fragments = fragments;
+    }
+
     public MainPagerAdapter(FragmentManager fm) {
         super(fm);
+        fragments = new ArrayList<>();
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return WeatherFragment.create();
-            case 1:
-                return DailyForecastFragment.create();
-            default:
-                return null;
-        }
+        return fragments.get(position);
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return fragments.size();
     }
 }

@@ -4,17 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,6 +33,7 @@ import ru.andrikeev.android.synoptic.utils.IntentHelper;
 public class MainActivity extends BaseActivity
         implements HasSupportFragmentInjector {
 
+    private List<Fragment> fragments;
     private MainPagerAdapter adapter;
     private ViewPager viewPager;
     private DotsIndicator dots;
@@ -58,21 +59,25 @@ public class MainActivity extends BaseActivity
 
         viewPager = (ViewPager) findViewById(R.id.mainViewPager);
 
+        fragments = new ArrayList<>();
+        fragments.add(WeatherFragment.create());
+        fragments.add(DailyForecastFragment.create());
+
         if (viewPager != null) {
             adapter = new MainPagerAdapter(getSupportFragmentManager());
+            adapter.setFragments(fragments);
             viewPager.setAdapter(adapter);
 
-            dots= (DotsIndicator) findViewById(R.id.dots_indicator);
-            dots.setViewPager(viewPager);
-        }
 
-//        if (savedInstanceState == null) {
-//            WeatherFragment weatherFragment = WeatherFragment.create();
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragmentWeather, weatherFragment)
-//                    .commit();
-//        }
-    }
+            dots = (DotsIndicator) findViewById(R.id.dots_indicator);
+            dots.setViewPager(viewPager);
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.leftFragment, fragments.get(0), WeatherFragment.TAG)
+                    .replace(R.id.rightFragment, fragments.get(1), DailyForecastFragment.TAG)
+                    .commit();
+        }
+}
 
     public static Intent getIntent(@NonNull Context context) {
         Intent intent = new Intent(context, MainActivity.class);
