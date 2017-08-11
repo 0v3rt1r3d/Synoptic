@@ -149,7 +149,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                         Location location = placesResponse.resultPlace().geometry().location();
                         String cityName = placesResponse.resultPlace().address();
                         return openWeatherService.getWeather(location.latitude(), location.longitude())
-                                .map(converter::toCacheModel)
+                                .map(converter::toWeatherCacheModel)
                                 .doOnSuccess(weather -> {
                                     cacheService.cacheCity(City.builder()
                                             .setCityName(cityName)
@@ -169,7 +169,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
         return openWeatherService.getWeather(cityId)
                 .map(weatherResponse -> {
                     Timber.d("Weather loaded from api: %s", weatherResponse);
-                    Weather weather = converter.toCacheModel(weatherResponse);
+                    Weather weather = converter.toWeatherCacheModel(weatherResponse);
                     cacheService.cacheWeather(weather);
                     return weather;
                 });
@@ -191,7 +191,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
         return openWeatherService.getWeather(lat, lon)
                 .map(weatherResponse -> {
                     Timber.d("Weather loaded from api: %s", weatherResponse);
-                    Weather weather = converter.toCacheModel(weatherResponse);
+                    Weather weather = converter.toWeatherCacheModel(weatherResponse);
                     settings.setCityId(weather.cityId());
                     cacheService.cacheWeather(weather);
                     return weather;

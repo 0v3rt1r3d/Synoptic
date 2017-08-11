@@ -26,7 +26,7 @@ public interface ModelsConverter {
     /**
      * Converts remote weather model to cache model.
      */
-    Weather toCacheModel(@NonNull WeatherResponse weatherResponse);
+    Weather toWeatherCacheModel(@NonNull WeatherResponse weatherResponse);
 
 
     List<DailyForecast> toDailyForecastCacheModel(@NonNull DailyForecastResponse forecastResponse);

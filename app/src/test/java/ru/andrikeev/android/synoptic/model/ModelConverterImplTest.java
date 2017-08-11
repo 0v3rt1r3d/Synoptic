@@ -104,11 +104,11 @@ public class ModelConverterImplTest {
 //    }
 //
 //    @Test
-//    public void toCacheModel(){
+//    public void toWeatherCacheModel(){
 //        WeatherResponse weatherResponse = new Gson()
 //                .fromJson(jsonExample,WeatherResponse.class);
 //
-//        Weather weather = converter.toCacheModel(weatherResponse);
+//        Weather weather = converter.toWeatherCacheModel(weatherResponse);
 //
 //        assertEquals(expWeather.getCityId(),weather.getCityId());
 //        assertEquals(expWeather.getCityName(),weather.getCityName());

@@ -47,23 +47,6 @@ public class ModelsConverterImpl implements ModelsConverter {
         this.context = context;
     }
 
-    public WeatherModel toViewModel(@NonNull Weather weather) {
-
-        return WeatherModel.Builder()
-                .setDate(DateUtils.formatWeatherDate(new Date(weather.timestamp())))
-                .setWeatherIconId(resolveWeatherIcon(weather.weatherId()))
-                .setDescription(weather.description())
-                .setTemperature(getTemperatureString(weather.temperature()))
-                .setTemperatureUnits(getTemperatureUnits())
-                .setPressure(getPressureString(weather.pressure()))
-                .setHumidity(getHumidityString(weather.humidity()))
-                .setWindSpeed(getWindString(weather.windSpeed()))
-                .setWindDirectionIconId(resolveWindDirection(weather.windDegree()))
-                .setClouds(getCloudsString(weather.clouds()))
-                .build();
-
-    }
-
     private static int resolveWindDirection(float windDegree) {
         if (windDegree >= 0 && windDegree < 33.75) {
             return R.drawable.ic_weather_wind_direction_north;
@@ -131,6 +114,11 @@ public class ModelsConverterImpl implements ModelsConverter {
         return String.valueOf(UnitsUtils.formatTemperature(temperature, settings.getTempUnits()));
     }
 
+    private String getDateString(long timestamp){
+        return context.getString(R.string.weather_updated,
+                DateUtils.formatWeatherDate(new Date(timestamp)));
+    }
+
     private String getTemperatureUnits() {
         return context.getString(settings.getTempUnits() == TemperatureUnits.CELSIUS
                 ? R.string.pref_temp_units_celsius_sign
@@ -153,10 +141,25 @@ public class ModelsConverterImpl implements ModelsConverter {
         return context.getString(R.string.weather_clouds, UnitsUtils.round(clouds));
     }
 
-    public Weather toCacheModel(@NonNull WeatherResponse weatherResponse) {
+    public WeatherModel toViewModel(@NonNull Weather weather) {
+        return WeatherModel.Builder()
+                .setDate(getDateString(weather.timestamp()))
+                .setWeatherIconId(resolveWeatherIcon(weather.weatherId()))
+                .setDescription(weather.description())
+                .setTemperature(getTemperatureString(weather.temperature()))
+                .setTemperatureUnits(getTemperatureUnits())
+                .setPressure(getPressureString(weather.pressure()))
+                .setHumidity(getHumidityString(weather.humidity()))
+                .setWindSpeed(getWindString(weather.windSpeed()))
+                .setWindDirectionIconId(resolveWindDirection(weather.windDegree()))
+                .setClouds(getCloudsString(weather.clouds()))
+                .build();
+    }
+
+    public Weather toWeatherCacheModel(@NonNull WeatherResponse weatherResponse) {
         return Weather.builder()
                 .setCityId(weatherResponse.cityId())
-                .setDescription(weatherResponse.weatherDescription().get(0).description())
+                .setDescription(makeFirstCharUpper(weatherResponse.weatherDescription().get(0).description()))
                 .setTimestamp(weatherResponse.timestamp() * DATE_FACTOR)
                 .setWeatherId(weatherResponse.weatherDescription().get(0).id())
                 .setTemperature(weatherResponse.weatherCondition().temperature())
@@ -249,7 +252,7 @@ public class ModelsConverterImpl implements ModelsConverter {
                     getTemperatureString(forecast.tempNight()),
                     getTemperatureString(forecast.tempEvening()),
                     getTemperatureString(forecast.tempMorning()),
-                    forecast.description(),
+                    makeFirstCharUpper(forecast.description()),
                     getPressureString(forecast.pressure()),
                     getHumidityString(forecast.humidity()),
                     getWindString(forecast.windSpeed()),
@@ -272,7 +275,7 @@ public class ModelsConverterImpl implements ModelsConverter {
             items.add(ForecastItem.create(
                     resolveWeatherIcon(forecast.weatherIconId()),
                     DateUtils.formatForecastDate(new Date(forecast.timestamp())),
-                    forecast.description(),
+                    makeFirstCharUpper(forecast.description()),
                     getCloudsString(forecast.clouds()),
                     getWindString(forecast.windSpeed()),
                     getTemperatureString(forecast.temperature()),
@@ -284,5 +287,11 @@ public class ModelsConverterImpl implements ModelsConverter {
         }
 
         return ForecastModel.create(cityId, cityName, items);
+    }
+
+    @NonNull
+    private String makeFirstCharUpper(@NonNull String text){
+        String f = text.substring(0,1).toUpperCase();
+        return f.concat(text.substring(1));
     }
 }

@@ -38,8 +38,9 @@
     <string name="main_nav_forecast">Прогноз</string>
     <string name="main_nav_daily_forecast">Прогноз на неделю</string>
     <string name="menu_nav_weather">Погода</string>
-    <string name="forecast_temp_day">День</string>
-    <string name="forecast_temp_evening">Вечер</string>
-    <string name="forecast_temp_morning">Утро</string>
-    <string name="forecast_temp_night">Ночь</string>
+    <string name="forecast_text_day">День</string>
+    <string name="forecast_text_evening">Вечер</string>
+    <string name="forecast_text_morning">Утро</string>
+    <string name="forecast_text_night">Ночь</string>
+    <string name="weather_updated">"Обновлено: %1$s"</string>
 </resources>

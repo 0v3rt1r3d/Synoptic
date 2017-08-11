@@ -9,15 +9,6 @@
         <item name="android:tint">@color/tintIcons</item>
     </style>
 
-    <style name="AppTheme.Base.MainActivity">
-        <item name="android:windowBackground">@color/colorPrimary</item>
-    </style>
-
-
-
-
-
-
     <style name="AppTheme" parent="AppTheme.Base"/>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
