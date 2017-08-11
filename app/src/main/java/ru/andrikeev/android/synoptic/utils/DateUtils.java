@@ -13,7 +13,7 @@ import java.util.Date;
 public class DateUtils {
 
     public static String formatWeatherDate(@NonNull Date date) {
-        DateFormat shortenedDateFormat = new SimpleDateFormat("d EEEE MMMM HH:mm");
+        DateFormat shortenedDateFormat = new SimpleDateFormat("d MMMM HH:mm");
         return shortenedDateFormat.format(date);
     }
 

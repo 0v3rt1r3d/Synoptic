@@ -6,6 +6,7 @@ import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import ru.andrikeev.android.synoptic.model.data.ForecastModel;
@@ -32,6 +33,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
     private void loadWeatherAndForecasts() {
         getViewState().showLoading();
+
         repository.loadWeather()
                 .subscribe(
                         new Observer<Resource<WeatherModel>>() {

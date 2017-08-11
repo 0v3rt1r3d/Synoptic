@@ -36,4 +36,5 @@ public interface CacheService {
     void cacheForecasts(@NonNull final List<Forecast> forecasts);
     void cacheDailyForecasts(@NonNull final List<DailyForecast> forecasts);
     void cacheCity(@NonNull final City city);
+    void updateLastCityMessage(final long cityId, final float message);
 }
