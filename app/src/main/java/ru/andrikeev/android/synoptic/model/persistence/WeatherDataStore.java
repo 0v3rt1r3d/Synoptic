@@ -24,6 +24,7 @@ import io.reactivex.functions.LongConsumer;
 import io.reactivex.schedulers.Schedulers;
 import io.requery.Persistable;
 import io.requery.reactivex.ReactiveEntityStore;
+import ru.andrikeev.android.synoptic.model.repository.Resource;
 import timber.log.Timber;
 
 /**
@@ -107,6 +108,16 @@ public class WeatherDataStore implements CacheService {
                 .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Single<City> removeCity(@NonNull City city) {
+        return dataStore.delete(City.class)
+                .where(CityType.CITY_ID.eq(city.cityId()))
+                .get()
+                .single()
+                .subscribeOn(Schedulers.io())
+                .map(integer -> city);
     }
 
 

@@ -51,6 +51,7 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         if (settings.isFirstStart()) {
             IntentHelper.openCityActivity(this, true);
+            return;
         }
 
         setContentView(R.layout.activity_main);
@@ -68,7 +69,6 @@ public class MainActivity extends BaseActivity
             adapter = new MainPagerAdapter(getSupportFragmentManager());
             adapter.setFragments(fragments);
             viewPager.setAdapter(adapter);
-
 
             dots = (DotsIndicator) findViewById(R.id.dots_indicator);
             dots.setViewPager(viewPager);

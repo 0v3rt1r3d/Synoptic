@@ -21,4 +21,5 @@ public interface CityView extends MvpView{
     void hideProgressAndExit();
     void hideKeyboard();
     void showError();
+    void showCityRemoved(@NonNull City city);
 }

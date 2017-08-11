@@ -30,12 +30,14 @@ import ru.andrikeev.android.synoptic.model.persistence.City;
 import ru.andrikeev.android.synoptic.presentation.presenter.city.CityPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.CityView;
 import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
+import ru.andrikeev.android.synoptic.utils.IntentHelper;
 
 /**
  * Created by overtired on 25.07.17.
  */
 
-public class CityFragment extends BaseFragment<CityView, CityPresenter> implements CityView, OnCityClickListener {
+public class CityFragment extends BaseFragment<CityView, CityPresenter>
+        implements CityView, OnSuggestionClickListener, OnCityClickListener {
     private ImageView searchImage;
     private EditText editText;
     private RecyclerView recyclerView;
@@ -60,7 +62,7 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.recycler_city);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new CityAdapter(this);
+        adapter = new CityAdapter(this,this);
         recyclerView.setAdapter(adapter);
 
         presenter.onTextChanged(RxTextView
@@ -115,6 +117,7 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     public void hideProgressAndExit() {
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
+        IntentHelper.openMainActivity(getActivity());
     }
 
     @Override
@@ -132,7 +135,13 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     }
 
     @Override
-    public void onCityClick(@NonNull SuggestionModel model) {
+    public void showCityRemoved(@NonNull City city) {
+        //// TODO: 10.08.17 strings
+        Toast.makeText(getActivity(),"City removed!",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuggestionClick(@NonNull SuggestionModel model) {
         presenter.loadCity(model.getPlaceID());
     }
 
@@ -140,5 +149,16 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter> implemen
     public void onDestroyView() {
         super.onDestroyView();
         presenter.onDestroy();
+    }
+
+    @Override
+    public void onCityClick(@NonNull City city) {
+        presenter.onCitySelected(city);
+    }
+
+    @Override
+    public void onCityRemoveClick(@NonNull City city) {
+        presenter.onCityRemoved(city);
+        //todo update list
     }
 }

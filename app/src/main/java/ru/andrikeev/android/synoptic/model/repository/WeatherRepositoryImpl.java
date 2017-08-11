@@ -97,8 +97,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     @Override
     public Observable<Resource<ForecastModel>> loadForecasts() {
         return cacheService.getForecasts(settings.getCityId(), 0.0f)
-                .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toForecastViewModel(forecasts))
+                .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
                 .map(Resource::success)
                 .toObservable()
                 .concatWith(forecastSubject)
@@ -108,8 +108,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     @Override
     public Observable<Resource<DailyForecastModel>> loadDailyForecast() {
         return cacheService.getDailyForecasts(settings.getCityId(), 0.0f)
-                .onErrorResumeNext(loadDailyForecastAndSave(settings.getCityId()))
                 .map(forecasts -> converter.toDailyForecastViewModel(forecasts))
+                .onErrorResumeNext(loadDailyForecastAndSave(settings.getCityId()))
                 .map(Resource::success)
                 .toObservable()
                 .concatWith(dailyForecastSubject)
@@ -120,6 +120,12 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     public Single<String> loadCity() {
         return cacheService.getCity(settings.getCityId())
                 .map(City::cityName);
+    }
+
+    @Override
+    public Single<City> removeCachedCity(@NonNull City city) {
+        return cacheService.removeCity(city).observeOn(AndroidSchedulers.mainThread()
+        );
     }
 
     @Override
@@ -170,13 +176,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @NonNull
-    private Single<List<Forecast>> loadForecastRemoteAndSave(long cityId) {
+    private Single<ForecastModel> loadForecastRemoteAndSave(long cityId) {
         return openWeatherService.getForecast(cityId)
                 .map(forecastResponse -> {
                     Timber.d("Forecast loaded from api: %s", forecastResponse);
                     List<Forecast> forecasts = converter.toForecastCacheModel(forecastResponse);
                     cacheService.cacheForecasts(forecasts);
-                    return forecasts;
+                    return converter.toForecastViewModel(forecasts);
                 });
     }
 
@@ -192,13 +198,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 });
     }
 
-    private Single<List<DailyForecast>> loadDailyForecastAndSave(long cityId) {
+    private Single<DailyForecastModel> loadDailyForecastAndSave(long cityId) {
         return openWeatherService.getDailyForecast(cityId, 16)//todo: count
                 .map(dailyForecastResponse -> {
                     Timber.d("Forecast loaded from api: %s", dailyForecastResponse);
                     List<DailyForecast> forecasts = converter.toDailyForecastCacheModel(dailyForecastResponse);
                     cacheService.cacheDailyForecasts(forecasts);
-                    return forecasts;
+                    return converter.toDailyForecastViewModel(forecasts);
                 });
     }
 
@@ -232,8 +238,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 .subscribe(
                         dailyForecasts -> {
                             Timber.d("Forecasts fetched: %s", dailyForecasts);
-                            dailyForecastSubject.onNext(Resource.success(
-                                    converter.toDailyForecastViewModel(dailyForecasts)));
+                            dailyForecastSubject.onNext(Resource.success(dailyForecasts));
                         },
                         throwable -> {
                             Timber.e(throwable, "Error fetching forecast");
@@ -248,7 +253,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                 .subscribe(
                         forecasts -> {
                             Timber.d("Forecasts fetched: %s", forecasts);
-                            forecastSubject.onNext(Resource.success(converter.toForecastViewModel(forecasts)));
+                            forecastSubject.onNext(Resource.success(forecasts));
                         },
                         throwable -> {
                             Timber.e(throwable, "Error fetching forecast");

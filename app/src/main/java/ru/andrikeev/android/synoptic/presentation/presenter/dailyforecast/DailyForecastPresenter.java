@@ -14,6 +14,7 @@ import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.DailyForecastView;
+import timber.log.Timber;
 
 /**
  * Created by overtired on 02.08.17.
@@ -54,6 +55,7 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
 
                     @Override
                     public void onError(Throwable e) {
+                        Timber.d(e, "Daily forecast was not loaded");
                         getViewState().showError();
                         getViewState().hideLoading();
                     }

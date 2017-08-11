@@ -28,6 +28,7 @@ public interface WeatherRepository {
     Observable<Resource<ForecastModel>> loadForecasts();
     Observable<Resource<DailyForecastModel>> loadDailyForecast();
     Single<String> loadCity();
+    Single<City> removeCachedCity(@NonNull City city);
 
     Single<List<SuggestionModel>> fetchPredictions(@NonNull String input);
     Single<List<City>> loadCachedCities();

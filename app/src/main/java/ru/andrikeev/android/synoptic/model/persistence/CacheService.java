@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.reactivex.Single;
+import ru.andrikeev.android.synoptic.model.repository.Resource;
 
 /**
  * Interface for local service (db, disk etc.).
@@ -23,6 +24,7 @@ public interface CacheService {
     Single<City> getCity(long cityId);
     Single<List<City>> getCities();
 
+    Single<City> removeCity(@NonNull City city);
 //    Single<List<Forecast>> getForecasts(long cityId);
 
     /**

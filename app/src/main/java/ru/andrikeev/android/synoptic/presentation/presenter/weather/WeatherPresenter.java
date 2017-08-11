@@ -14,6 +14,7 @@ import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
+import timber.log.Timber;
 
 /**
  * Presenter for {@link WeatherView} with
@@ -126,6 +127,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                                 getViewState().hideLoading();
                                 getViewState().setForecast(forecastModelResource.getData());//todo why?
                                 break;
+
                             case ERROR:
                                 getViewState().hideLoading();
                                 getViewState().showFetchingError();
@@ -134,6 +136,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
 
                     @Override
                     public void onError(Throwable e) {
+                        Timber.d(e,"Forecast was not loaded");
                         getViewState().hideLoading();
                         getViewState().showError();
                     }
