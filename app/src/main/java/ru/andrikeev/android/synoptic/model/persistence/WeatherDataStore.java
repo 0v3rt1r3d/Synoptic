@@ -145,32 +145,45 @@ public class WeatherDataStore implements CacheService {
                 .subscribeOn(Schedulers.io())
                 .flatMap(forecast -> dataStore.insert(forecast, Integer.class)
                         .toObservable())
-                .doOnComplete(() -> {
+                .toList()
+                .doOnSuccess(integers -> {
                     long cityId = forecasts.get(0).cityId();
                     float message = forecasts.get(0).message();
 
                     updateLastCityMessage(cityId, message);
                     dataStore.delete(Forecast.class)
-                            .where(ForecastType.CITY_ID.equal(cityId).and(CityType.LAST_MESSAGE.notEqual(message)))
+                            .where(ForecastType.CITY_ID.equal(cityId).and(ForecastType.MESSAGE.notEqual(message)))
                             .get()
                             .single()
                             .subscribeOn(Schedulers.io())
                             .subscribe(integer -> Timber.d("Old forecasts were removed"),
-                                    throwable -> Timber.d(throwable,"Old forecasts were not removed"));
+                                    throwable -> Timber.d(throwable, "Old forecasts were not removed"));
                 })
-                .toList()
-                .subscribe(forecast1 -> Timber.d("Forecasts were cached"),
-                        throwable -> Timber.d(throwable, "Forecasts were no cached"));
+                .subscribe(forecast1 -> Timber.d("New Forecasts were cached"),
+                        throwable -> Timber.d(throwable, "New Forecasts were no cached"));
     }
 
     @Override
     public void cacheDailyForecasts(@NonNull List<DailyForecast> forecasts) {
-        for (DailyForecast forecast : forecasts) {
-            dataStore.insert(forecast, Integer.class)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(dailyForecast1 -> {
-                    }, throwable -> Timber.d("Did not cache daily forecast"));
-        }
+        Observable.fromIterable(forecasts)
+                .subscribeOn(Schedulers.io())
+                .flatMap(forecast -> dataStore.insert(forecast, Integer.class).toObservable())
+                .toList()
+                .doOnSuccess(integers -> {
+                    long cityId = forecasts.get(0).cityId();
+                    float message = forecasts.get(0).message();
+
+                    updateLastCityMessage(cityId, message);
+                    dataStore.delete(DailyForecast.class)
+                            .where(DailyForecastType.CITY_ID.equal(cityId).and(DailyForecastType.MESSAGE.notEqual(message)))
+                            .get()
+                            .single()
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(integer -> Timber.d("Old forecasts were removed"),
+                                    throwable -> Timber.d(throwable, "Old forecasts were not removed"));
+                })
+                .subscribe(forecast1 -> Timber.d("New DailyForecasts were cached"),
+                        throwable -> Timber.d(throwable, "New DailyForecasts were no cached"));
     }
 
     @Override
