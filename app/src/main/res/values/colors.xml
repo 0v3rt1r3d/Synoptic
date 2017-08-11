@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFDD60</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#000000</color>
-
-    <color name="textColorPrimary">#545454</color>
+    <color name="colorPrimary">@color/colorYandexYellow</color>
+    <color name="colorPrimaryDark">@color/colorYandexBlack</color>
+    <color name="colorAccent">@color/colorYandexRed</color>
+    <color name="colorViewPagerDots">@android:color/primary_text_light</color>
+    <color name="tintIcons">@android:color/primary_text_light</color>
 </resources>

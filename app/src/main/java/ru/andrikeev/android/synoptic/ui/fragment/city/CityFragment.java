@@ -159,6 +159,5 @@ public class CityFragment extends BaseFragment<CityView, CityPresenter>
     @Override
     public void onCityRemoveClick(@NonNull City city) {
         presenter.onCityRemoved(city);
-        //todo update list
     }
 }

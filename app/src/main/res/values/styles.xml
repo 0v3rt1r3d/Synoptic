@@ -5,11 +5,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:textColor">@color/textColorPrimary</item>
-
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="android:tint">@color/tintIcons</item>
     </style>
+
+    <style name="AppTheme.Base.MainActivity">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+
+
+
+
 
     <style name="AppTheme" parent="AppTheme.Base"/>
 

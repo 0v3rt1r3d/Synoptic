@@ -40,9 +40,19 @@
         android:id="@+id/recycler_city"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/yandexLogo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edit_city" />
+
+    <ImageView
+        android:id="@+id/yandexLogo"
+        android:layout_margin="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:src="@drawable/logo_yandex"/>
 
 </android.support.constraint.ConstraintLayout>

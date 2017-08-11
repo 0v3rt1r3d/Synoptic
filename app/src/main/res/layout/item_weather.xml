@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
             app:layout_constraintLeft_toRightOf="@+id/temperature"
             app:layout_constraintTop_toTopOf="@+id/temperature"
             tools:text="˚C" />

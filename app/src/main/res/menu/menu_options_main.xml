@@ -2,12 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_settings"
-        android:icon="@drawable/ic_menu_drawer_settings"
         android:title="@string/main_nav_settings"
         />
     <item
         android:id="@+id/nav_about"
-        android:icon="@drawable/ic_menu_drawer_about"
         android:title="@string/main_nav_about"
         />
 </menu>

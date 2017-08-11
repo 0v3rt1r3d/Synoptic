@@ -63,7 +63,7 @@ public class CityPresenter extends RxPresenter<CityView> {
                             getViewState().showCityRemoved(city);
                             repository.loadCachedCities()
                                     .subscribe(cities -> {
-                                                getViewState().setCities(cities);                                         
+                                                getViewState().setCities(cities);
                                             },
                                             throwable -> getViewState().showError());
                         },
