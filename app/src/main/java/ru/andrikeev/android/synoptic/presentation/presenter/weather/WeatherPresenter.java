@@ -23,8 +23,6 @@ import timber.log.Timber;
 @InjectViewState
 public class WeatherPresenter extends RxPresenter<WeatherView> {
 
-    private Disposable forecastsSubscription;
-
     private WeatherRepository repository;
 
     @Inject
@@ -74,7 +72,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                 .subscribe(new Observer<Resource<ForecastModel>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        forecastsSubscription = d;
+                        subscriptions.add(d);
                     }
 
                     @Override
@@ -82,7 +80,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                         switch (forecastModelResource.getStatus()){
                             case SUCCESS:
                                 getViewState().hideLoading();
-                                getViewState().setForecast(forecastModelResource.getData());//todo why?
+                                getViewState().setForecast(forecastModelResource.getData());//todo why may be null?
                                 break;
 
                             case ERROR:

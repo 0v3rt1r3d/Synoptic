@@ -51,11 +51,12 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
     public class DailyForecastHolder extends RecyclerView.ViewHolder {
         private DailyForecastItem item;
 
+        private List<TextView> temperatureUnits;
+
         private TextView temperatureDay;
         private TextView temperatureNight;
         private TextView temperatureMorning;
         private TextView temperatureEvening;
-        private TextView temperatureUnits;
         private TextView windSpeed;
         private TextView humidity;
         private TextView pressure;
@@ -77,7 +78,6 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
             temperatureNight.setText(item.tempNight());
             temperatureMorning.setText(item.tempMorning());
             temperatureEvening.setText(item.tempEvening());
-            //temperatureUnits.setText(item); todo temperature units
             windSpeed.setText(item.windSpeed());
             humidity.setText(item.humidity());
             pressure.setText(item.pressure());
@@ -87,6 +87,10 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
 
             weatherIcon.setImageResource(item.weatherIconId());
             windDirectionIcon.setImageResource(item.windDirectionIconId());
+
+            for(TextView view:temperatureUnits){
+                view.setText(item.temperatureUnits());
+            }
         }
 
         public DailyForecastHolder(View itemView) {
@@ -95,7 +99,6 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
             temperatureNight = itemView.findViewById(R.id.temperatureNight);
             temperatureMorning = itemView.findViewById(R.id.temperatureMorning);
             temperatureEvening = itemView.findViewById(R.id.temperatureEvening);
-            temperatureUnits = itemView.findViewById(R.id.temperatureUnits);
             windSpeed = itemView.findViewById(R.id.windSpeed);
             humidity = itemView.findViewById(R.id.humidity);
             pressure = itemView.findViewById(R.id.pressure);
@@ -104,6 +107,12 @@ public class DailyForecastAdapter extends RecyclerView.Adapter<DailyForecastAdap
             description = itemView.findViewById(R.id.description);
             weatherIcon = itemView.findViewById(R.id.weatherIcon);
             windDirectionIcon = itemView.findViewById(R.id.windDirectionIcon);
+
+            temperatureUnits = new ArrayList<>();
+            temperatureUnits.add(itemView.findViewById(R.id.temperatureUnitsMorning));
+            temperatureUnits.add(itemView.findViewById(R.id.temperatureUnitsDay));
+            temperatureUnits.add(itemView.findViewById(R.id.temperatureUnitsEvening));
+            temperatureUnits.add(itemView.findViewById(R.id.temperatureUnitsNight));
         }
     }
 }

@@ -252,6 +252,7 @@ public class ModelsConverterImpl implements ModelsConverter {
                     getTemperatureString(forecast.tempNight()),
                     getTemperatureString(forecast.tempEvening()),
                     getTemperatureString(forecast.tempMorning()),
+                    getTemperatureUnits(),
                     makeFirstCharUpper(forecast.description()),
                     getPressureString(forecast.pressure()),
                     getHumidityString(forecast.humidity()),

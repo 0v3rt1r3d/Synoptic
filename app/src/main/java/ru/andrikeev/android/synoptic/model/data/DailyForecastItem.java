@@ -17,6 +17,7 @@ public abstract class DailyForecastItem {
     public abstract String tempNight();
     public abstract String tempEvening();
     public abstract String tempMorning();
+    public abstract String temperatureUnits();
     public abstract String description();
     public abstract String pressure();
     public abstract String humidity();
@@ -31,6 +32,7 @@ public abstract class DailyForecastItem {
             String tempNight,
             String tempEvening,
             String tempMorning,
+            String temperatureUnits,
             String description,
             String pressure,
             String humidity,
@@ -44,6 +46,7 @@ public abstract class DailyForecastItem {
                 tempNight,
                 tempEvening,
                 tempMorning,
+                temperatureUnits,
                 description,
                 pressure,
                 humidity,
