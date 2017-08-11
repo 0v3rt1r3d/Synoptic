@@ -54,7 +54,7 @@ public class CityAdapter extends Adapter<RecyclerView.ViewHolder> {
 
         if (viewType == CityHolder.VIEW_TYPE) {
             View v = inflater.inflate(R.layout.item_city, parent, false);
-            return new CityHolder(v,onCityClickListener);
+            return new CityHolder(v, onCityClickListener);
         } else {
             View v = inflater.inflate(R.layout.item_suggestion, parent, false);
             return new SuggestionHolder(v, onSuggestionClickListener);
@@ -111,7 +111,7 @@ public class CityAdapter extends Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public class CityHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class CityHolder extends RecyclerView.ViewHolder {
 
         public static final int VIEW_TYPE = 1;
 
@@ -122,20 +122,16 @@ public class CityAdapter extends Adapter<RecyclerView.ViewHolder> {
 
         public CityHolder(View itemView, OnCityClickListener listener) {
             super(itemView);
-            this.textView = itemView.findViewById(R.id.city_text);
-            this.imageRemove = itemView.findViewById(R.id.removeCityImage);
             this.listener = listener;
+            this.textView = itemView.findViewById(R.id.city_text);
+            this.textView.setOnClickListener(view -> listener.onCityClick(this.city));
+            this.imageRemove = itemView.findViewById(R.id.removeCityImage);
+            this.imageRemove.setOnClickListener(view -> listener.onCityRemoveClick(this.city));
         }
 
         public void setCity(@NonNull City city) {
             this.city = city;
             textView.setText(city.cityName());
-            imageRemove.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            this.listener.onCityClick(city);
         }
     }
 }

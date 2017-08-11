@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 import ru.andrikeev.android.synoptic.application.Settings;
 import ru.andrikeev.android.synoptic.model.persistence.City;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
@@ -24,8 +25,9 @@ import timber.log.Timber;
 @InjectViewState
 public class CityPresenter extends RxPresenter<CityView> {
 
-    private WeatherRepository repository;
+    private PublishSubject<String> textChangedSubject = PublishSubject.create();
 
+    private WeatherRepository repository;
     private Settings settings;
 
     @Inject
@@ -54,23 +56,35 @@ public class CityPresenter extends RxPresenter<CityView> {
 
     public void onCityRemoved(@NonNull City city) {
         repository.removeCachedCity(city)
-                .subscribe(city1 -> getViewState().showCityRemoved(city),
+                .subscribe(city1 -> {
+                            if(city1.cityId()==settings.getCityId()){
+                                settings.setFirstStart(true);
+                            }
+                            getViewState().showCityRemoved(city);
+                            repository.loadCachedCities()
+                                    .subscribe(cities -> {
+                                                getViewState().setCities(cities);                                         
+                                            },
+                                            throwable -> getViewState().showError());
+                        },
                         throwable -> getViewState().showError()
                 );
     }
 
     public void onTextChanged(Observable<String> observable) {
-        subscriptions.add(observable.subscribe(input -> {
-            if (input.length() > 0) {
-                repository.fetchPredictions(input)
-                        .subscribe(suggestionModels -> getViewState().setSuggestions(suggestionModels),
-                                throwable -> getViewState().showError());
-            } else {
-                repository.loadCachedCities()
-                        .subscribe(cities -> getViewState().setCities(cities),
-                                throwable -> getViewState().showError());
-            }
-        }, throwable -> Timber.d(throwable, "Could not load cities")));
+        subscriptions.add(observable
+                .concatWith(textChangedSubject)
+                .subscribe(input -> {
+                    if (input.length() > 0) {
+                        repository.fetchPredictions(input)
+                                .subscribe(suggestionModels -> getViewState().setSuggestions(suggestionModels),
+                                        throwable -> getViewState().showError());
+                    } else {
+                        repository.loadCachedCities()
+                                .subscribe(cities -> getViewState().setCities(cities),
+                                        throwable -> getViewState().showError());
+                    }
+                }, throwable -> Timber.d(throwable, "Could not load cities")));
     }
 
     public void onCitySelected(@NonNull City city) {

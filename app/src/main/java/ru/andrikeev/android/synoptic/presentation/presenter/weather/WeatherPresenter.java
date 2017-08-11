@@ -32,7 +32,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
         this.repository = repository;
     }
 
-    private void loadWeather() {
+    private void loadWeatherAndForecasts() {
         getViewState().showLoading();
         repository.loadWeather()
                 .subscribe(
@@ -70,49 +70,6 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                             }
                         }
                 );
-    }
-
-    public void fetchWeather() {
-        getViewState().showLoading();
-        repository.fetchWeather();
-    }
-
-    @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        loadWeather();
-    }
-
-//    public void fetchDailyForecast(){
-//        repository.fetchDailyForecast();
-//        repository.loadForecasts()
-//                .subscribe(new SingleObserver<ForecastModel>(){
-//
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(ForecastModel forecastModel) {
-//                        Timber.d("Forecast was restored from storage %s",forecastModel.toString());
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Timber.d("Forecast restoring failed");
-//                    }
-//                });
-//    }
-
-    public void fetchForecast(){
-        repository.fetchForecast();
-    }
-
-    private void loadCity(){
-        repository.loadCity().subscribe(name -> getViewState().setCity(name));
-    }
-
-    public void onResume(){
         repository.loadForecasts()
                 .subscribe(new Observer<Resource<ForecastModel>>() {
                     @Override
@@ -145,6 +102,30 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                     public void onComplete() {
                     }
                 });
+    }
+
+    public void fetchWeather() {
+        getViewState().showLoading();
+        repository.fetchWeather();
+    }
+
+    @Override
+    protected void onFirstViewAttach() {
+        super.onFirstViewAttach();
+        loadWeatherAndForecasts();
+    }
+
+    public void fetchForecast(){
+        repository.fetchForecast();
+    }
+
+    private void loadCity(){
+        repository.loadCity().subscribe(name -> getViewState().setCity(name));
+    }
+
+    public void onResume(){
+        loadWeatherAndForecasts();
+        loadCity();
     }
 
     public void updateData(){
