@@ -13,6 +13,7 @@ import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.network.googleplaces.ResponceConverter;
 import ru.andrikeev.android.synoptic.model.persistence.City;
+import ru.andrikeev.android.synoptic.model.persistence.Forecast;
 
 /**
  * Interface for weather repository.

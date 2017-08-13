@@ -103,7 +103,8 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void setForecast(@NonNull ForecastModel forecast) {
         adapter.setForecast(forecast);
-        adapter.notifyItemRangeChanged(0, forecast.items().size());
+        adapter.notifyDataSetChanged();
+        //adapter.notifyItemRangeChanged(0, forecast.items().size());
     }
 
     public static WeatherFragment create() {

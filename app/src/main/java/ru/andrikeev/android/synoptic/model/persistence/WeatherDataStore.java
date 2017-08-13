@@ -66,8 +66,12 @@ public class WeatherDataStore implements CacheService {
                 .subscribeOn(Schedulers.io())
                 .toList()
                 .map(forecasts -> {
-                    Timber.d("Forecasts restored from cache: %s", forecasts);
-                    return forecasts;
+                    if(forecasts.size()>0){
+                        Timber.d("Forecasts restored from cache: %s", forecasts);
+                        return forecasts;
+                    }else {
+                        throw new Exception("Where are not forecasts in the database");
+                    }
                 });
     }
 

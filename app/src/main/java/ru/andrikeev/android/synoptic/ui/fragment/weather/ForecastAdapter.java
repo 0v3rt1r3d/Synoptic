@@ -133,8 +133,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView date;
         private TextView description;
 
-        private ImageView weatherIcon;
-
         public void setItem(@NonNull ForecastItem item) {
             this.item = item;
             updateHolder();
@@ -145,7 +143,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             temperatureUnits.setText(item.temperatureUnits());
             date.setText(item.date());
             description.setText(item.description());
-            weatherIcon.setImageResource(item.weatherIconId());
         }
 
         public ForecastHolder(View itemView) {
@@ -154,8 +151,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             temperatureUnits = itemView.findViewById(R.id.temperatureUnits);
             date = itemView.findViewById(R.id.date);
             description = itemView.findViewById(R.id.description);
-
-            weatherIcon = itemView.findViewById(R.id.weatherIcon);
         }
     }
 }

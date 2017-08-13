@@ -1,8 +1,12 @@
 package ru.andrikeev.android.synoptic.model.repository;
 
 import android.support.annotation.NonNull;
+import android.text.format.DateUtils;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -40,7 +44,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private PublishSubject<Resource<WeatherModel>> weatherSubject = PublishSubject.create();
 
     @NonNull
-    private PublishSubject<Resource<ForecastModel>> forecastSubject = PublishSubject.create();
+    private PublishSubject<Resource<List<Forecast>>> forecastSubject = PublishSubject.create();
 
     @NonNull
     private PublishSubject<Resource<DailyForecastModel>> dailyForecastSubject = PublishSubject.create();
@@ -97,11 +101,32 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     @Override
     public Observable<Resource<ForecastModel>> loadForecasts() {
         return cacheService.getForecasts(settings.getCityId(), 0.0f)
-                .map(forecasts -> converter.toForecastViewModel(forecasts))
                 .onErrorResumeNext(loadForecastRemoteAndSave(settings.getCityId()))
                 .map(Resource::success)
                 .toObservable()
                 .concatWith(forecastSubject)
+                .map(forecasts->{
+                    if(forecasts.getStatus()==Status.SUCCESS) {
+                        List<Forecast> oneDayForecasts = new ArrayList<>();
+                        long today = new Date().getTime();
+                        for (Forecast forecast : forecasts.getData()) {
+                            if(forecast.timestamp()>today
+                                    && forecast.timestamp()<today+ DateUtils.DAY_IN_MILLIS){
+
+                                oneDayForecasts.add(forecast);
+                            }
+                        }
+                        return Resource.success(oneDayForecasts);
+                    }
+                    return forecasts;
+                })
+                .map(forecasts1->{
+                    if(forecasts1.getStatus()==Status.SUCCESS){
+                        return Resource.success(converter.toForecastViewModel(forecasts1.getData()));
+                    }else {
+                        throw new Exception("Couldn't load files");
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -176,13 +201,13 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @NonNull
-    private Single<ForecastModel> loadForecastRemoteAndSave(long cityId) {
+    private Single<List<Forecast>> loadForecastRemoteAndSave(long cityId) {
         return openWeatherService.getForecast(cityId)
                 .map(forecastResponse -> {
                     Timber.d("Forecast loaded from api: %s", forecastResponse);
                     List<Forecast> forecasts = converter.toForecastCacheModel(forecastResponse);
                     cacheService.cacheForecasts(forecasts);
-                    return converter.toForecastViewModel(forecasts);
+                    return forecasts;
                 });
     }
 

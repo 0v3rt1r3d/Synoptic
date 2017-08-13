@@ -19,7 +19,7 @@ public class DateUtils {
     }
 
     public static String formatForecastDate(@NonNull Date date){
-        DateFormat dateFormat = new SimpleDateFormat("EEEE HH:mm");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(date).toUpperCase();
     }
 
