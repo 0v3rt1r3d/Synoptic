@@ -33,32 +33,32 @@ public class ModelConverterImplTest {
 //
 //    private String jsonExample;
 //
-//    private Weather expWeather = new Weather(
-//            2172797,
-//            "Cairns",
-//            1501164000000l,
-//            802,
-//            "scattered clouds",
-//            294.15f,
-//            1019,
-//            77,
-//            4.6f,
-//            180,
-//            40);
-//
-//    private WeatherModel expWeatherModel = new WeatherModel(
-//            "Cairns",
-//            "27.07.17 14:00",
-//            2130837607,
-//            "scattered clouds",
-//            "21",
-//            "˚C",
-//            "1019 Pa",
-//            "77%",
-//            "5",
-//            2130837607,
-//            "40%"
-//    );
+////    private Weather expWeather = new Weather(
+////            2172797,
+////            "Cairns",
+////            1501164000000l,
+////            802,
+////            "scattered clouds",
+////            294.15f,
+////            1019,
+////            77,
+////            4.6f,
+////            180,
+////            40);
+////
+////    private WeatherModel expWeatherModel = new WeatherModel(
+////            "Cairns",
+////            "27.07.17 14:00",
+////            2130837607,
+////            "scattered clouds",
+////            "21",
+////            "˚C",
+////            "1019 Pa",
+////            "77%",
+////            "5",
+////            2130837607,
+////            "40%"
+////    );
 //
 //
 //    @Before

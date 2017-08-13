@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'jacoco-android'
 apply from: "$project.rootDir/keystore/secret.gradle"
 apply from: "$project.rootDir/tools/version.gradle"
 
@@ -44,6 +45,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
+            testCoverageEnabled = true
             signingConfig signingConfigs.debug
         }
         release {
@@ -75,6 +77,15 @@ android {
         test {
             resources.srcDirs += ['src/test/res']
         }
+    }
+
+    jacocoAndroidUnitTestReport {
+        excludes += ['**/AutoValue_*.*',
+                     '**/*JavascriptBridge.class']
+
+        csv.enabled false
+        html.enabled true
+        xml.enabled true
     }
 
 }
