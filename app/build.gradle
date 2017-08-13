@@ -80,8 +80,14 @@ android {
     }
 
     jacocoAndroidUnitTestReport {
-        excludes += ['**/AutoValue_*.*',
-                     '**/*JavascriptBridge.class']
+        excludes += ['**/*AutoValue*.*', 
+        '**/**Type.*', 
+        '**/Dagger*.*',
+        '**/AppInjector*.*',
+        '**/*Module.*',
+        '**/*_Factory.*',
+        '**/MoxyReflector*.*'
+        ]
 
         csv.enabled false
         html.enabled true
