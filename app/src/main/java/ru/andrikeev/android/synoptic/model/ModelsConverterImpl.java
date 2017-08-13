@@ -189,8 +189,8 @@ public class ModelsConverterImpl implements ModelsConverter {
                     .setTimestamp(dailyForecast.date() * DATE_FACTOR)
                     .setDescription(dailyForecast.weather().get(0).description())
                     .setClouds(dailyForecast.clouds())
-                    .setWindSpeed(dailyForecast.windSpeed())//todo: rename windspeed
-                    .setWindDegree(dailyForecast.windDegree())//todo: rename windDegree
+                    .setWindSpeed(dailyForecast.windSpeed())
+                    .setWindDegree(dailyForecast.windDegree())
                     .setPressure(dailyForecast.pressure())
                     .setHumidity(dailyForecast.humidity())
                     .setTempDay(dailyForecast.temp().tempDay())

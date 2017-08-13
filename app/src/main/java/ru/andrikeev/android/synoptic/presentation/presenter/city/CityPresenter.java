@@ -56,8 +56,9 @@ public class CityPresenter extends RxPresenter<CityView> {
 
     public void onCityRemoved(@NonNull City city) {
         repository.removeCachedCity(city)
+                .doOnSubscribe(disposable -> subscriptions.add(disposable))
                 .subscribe(city1 -> {
-                            if(city1.cityId()==settings.getCityId()){
+                            if (city1.cityId() == settings.getCityId()) {
                                 settings.setFirstStart(true);
                             }
                             getViewState().showCityRemoved(city);
@@ -72,8 +73,8 @@ public class CityPresenter extends RxPresenter<CityView> {
     }
 
     public void onTextChanged(Observable<String> observable) {
-        subscriptions.add(observable
-                .concatWith(textChangedSubject)
+        observable.concatWith(textChangedSubject)
+                .doOnSubscribe(disposable -> subscriptions.add(disposable))
                 .subscribe(input -> {
                     if (input.length() > 0) {
                         repository.fetchPredictions(input)
@@ -84,7 +85,7 @@ public class CityPresenter extends RxPresenter<CityView> {
                                 .subscribe(cities -> getViewState().setCities(cities),
                                         throwable -> getViewState().showError());
                     }
-                }, throwable -> Timber.d(throwable, "Could not load cities")));
+                }, throwable -> Timber.d(throwable, "Could not load cities"));
     }
 
     public void onCitySelected(@NonNull City city) {

@@ -25,7 +25,6 @@ public abstract class RxPresenter<View extends MvpView> extends MvpPresenter<Vie
         for (Disposable subscription:subscriptions) {
             if (subscription != null) {
                 subscription.dispose();
-                subscription = null;
             }
         }
     }

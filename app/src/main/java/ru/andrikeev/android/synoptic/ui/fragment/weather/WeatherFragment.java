@@ -86,12 +86,12 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
 
     @Override
     public void showError() {
-        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show(); // TODO: show error
+        Toast.makeText(getActivity(), getString(R.string.danger_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showFetchingError() {
-        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show(); // TODO: show error
+        Toast.makeText(getActivity(), getString(R.string.fetching_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override

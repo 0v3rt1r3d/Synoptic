@@ -40,6 +40,8 @@ public class WeatherRepositoryImpl implements WeatherRepository {
      */
     private static final long FETCH_MIN_TIMEOUT = 600_000_000L;
 
+    private static final int MAX_COUNT_OF_FORECASTS = 16;
+
     @NonNull
     private PublishSubject<Resource<WeatherModel>> weatherSubject = PublishSubject.create();
 
@@ -166,7 +168,6 @@ public class WeatherRepositoryImpl implements WeatherRepository {
 
     @Override
     public Single<Long> fetchCity(@NonNull String placeId) {
-        //todo leaks
         return googlePlacesService.loadPlace(placeId)
                 .flatMap(placesResponse -> {
                     Timber.d("Status", placesResponse.status());
@@ -224,7 +225,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     private Single<DailyForecastModel> loadDailyForecastAndSave(long cityId) {
-        return openWeatherService.getDailyForecast(cityId, 16)//todo: count
+        return openWeatherService.getDailyForecast(cityId, MAX_COUNT_OF_FORECASTS)
                 .map(dailyForecastResponse -> {
                     Timber.d("Forecast loaded from api: %s", dailyForecastResponse);
                     List<DailyForecast> forecasts = converter.toDailyForecastCacheModel(dailyForecastResponse);

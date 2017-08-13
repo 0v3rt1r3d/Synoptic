@@ -31,12 +31,10 @@ public class DailyForecastPresenter extends RxPresenter<DailyForecastView> {
     }
 
     public void onResume(){
-        //todo: leaks
         repository.loadDailyForecast()
                 .subscribe(new Observer<Resource<DailyForecastModel>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        //// TODO: 09.08.17 will dispose?
                         subscriptions.add(d);
                     }
 

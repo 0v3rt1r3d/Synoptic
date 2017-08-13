@@ -82,7 +82,7 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                         switch (forecastModelResource.getStatus()){
                             case SUCCESS:
                                 getViewState().hideLoading();
-                                getViewState().setForecast(forecastModelResource.getData());//todo why may be null?
+                                getViewState().setForecast(forecastModelResource.getData());
                                 break;
 
                             case ERROR:

@@ -78,4 +78,7 @@
     <string name="menu_nav_weather">Weather</string>
 
     <string name="pref_first_start" translatable="false">pref_keys.first_start</string>
+    <string name="city_removed">The city was removed</string>
+    <string name="danger_error">An error occured</string>
+    <string name="fetching_error">A fetching error occured</string>
 </resources>
