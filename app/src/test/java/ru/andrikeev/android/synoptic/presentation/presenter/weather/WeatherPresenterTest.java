@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import io.reactivex.Observable;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
+import ru.andrikeev.android.synoptic.model.persistence.City;
 import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.Status;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
@@ -37,10 +38,23 @@ public class WeatherPresenterTest {
 //    @Test
 //    public void onAttachSuccessFetching() {
 //        Resource<WeatherModel> resourceSuccess = mock(Resource.class);
-//        WeatherModel model = new WeatherModel("", "", 0, "", "", "", "", "", "", 0, "");
+//        WeatherModel model = WeatherModel.Builder()
+//                .setClouds("")
+//                .setDate("")
+//                .setDescription("")
+//                .setHumidity("")
+//                .setWeatherIconId(0)
+//                .setTemperature("")
+//                .setPressure("")
+//                .setWindSpeed("")
+//                .setTemperatureUnits("")
+//                .setWindDirectionIconId(0)
+//                .build();
 //
 //        when(resourceSuccess.getStatus()).thenReturn(Status.SUCCESS);
 //        when(resourceSuccess.getData()).thenReturn(model);
+//
+//        when(repository.loadCity()).thenReturn();
 //
 //        when(repository.loadWeather())
 //                .thenReturn(Observable.just(resourceSuccess));
@@ -60,7 +74,10 @@ public class WeatherPresenterTest {
 //    @Test
 //    public void onAttachProcessFetching() {
 //        Resource<WeatherModel> resourceFetching = mock(Resource.class);
-//        WeatherModel model = new WeatherModel("", "", 0, "", "", "", "", "", "", 0, "");
+//        WeatherModel model = WeatherModel.Builder()
+//                .setHumidity("")
+//                .setClouds("")
+//                .build();
 //
 //        when(resourceFetching.getStatus()).thenReturn(Status.FETCHING);
 //

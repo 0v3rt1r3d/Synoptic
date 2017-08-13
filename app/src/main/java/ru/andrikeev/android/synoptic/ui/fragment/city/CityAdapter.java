@@ -124,9 +124,9 @@ public class CityAdapter extends Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             this.listener = listener;
             this.textView = itemView.findViewById(R.id.city_text);
-            this.textView.setOnClickListener(view -> listener.onCityClick(this.city));
+            this.textView.setOnClickListener(view -> this.listener.onCityClick(this.city));
             this.imageRemove = itemView.findViewById(R.id.removeCityImage);
-            this.imageRemove.setOnClickListener(view -> listener.onCityRemoveClick(this.city));
+            this.imageRemove.setOnClickListener(view -> this.listener.onCityRemoveClick(this.city));
         }
 
         public void setCity(@NonNull City city) {
