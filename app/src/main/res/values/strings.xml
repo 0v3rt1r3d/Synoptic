@@ -18,6 +18,12 @@
     <string name="weather_wind_kph">%1$d km/h</string>
     <string name="weather_wind_mph">%1$d mi/h</string>
     <string name="weather_wind_mps">%1$d m/s</string>
+    <string name="weather_updated">Updated %1$s</string>
+
+    <string name="forecast_text_day">Day</string>
+    <string name="forecast_text_night">Night</string>
+    <string name="forecast_text_morning">Morning</string>
+    <string name="forecast_text_evening">Evening</string>
 
     <!-- Settings -->
     <string name="pref_activity_title">Settings</string>
@@ -67,4 +73,12 @@
     <string name="pref_city_id" translatable="false">pref_keys.city_id</string>
 
     <string name="pref_city_id_default" translatable="false">5601538</string>
+    <string name="main_nav_forecast">Forecast</string>
+    <string name="main_nav_daily_forecast">Daily forecast</string>
+    <string name="menu_nav_weather">Weather</string>
+
+    <string name="pref_first_start" translatable="false">pref_keys.first_start</string>
+    <string name="city_removed">The city was removed</string>
+    <string name="danger_error">An error occured</string>
+    <string name="fetching_error">A fetching error occured</string>
 </resources>

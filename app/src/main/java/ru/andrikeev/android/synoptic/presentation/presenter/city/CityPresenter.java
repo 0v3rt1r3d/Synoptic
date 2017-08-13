@@ -5,24 +5,18 @@ import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 
-import org.reactivestreams.Subscription;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
+import io.reactivex.subjects.PublishSubject;
 import ru.andrikeev.android.synoptic.application.Settings;
-import ru.andrikeev.android.synoptic.model.CityResolver;
-import ru.andrikeev.android.synoptic.model.data.SuggestionModel;
+import ru.andrikeev.android.synoptic.model.persistence.City;
+import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.CityView;
+import timber.log.Timber;
 
 /**
  * Created by overtired on 25.07.17.
@@ -31,16 +25,15 @@ import ru.andrikeev.android.synoptic.presentation.view.CityView;
 @InjectViewState
 public class CityPresenter extends RxPresenter<CityView> {
 
+    private PublishSubject<String> textChangedSubject = PublishSubject.create();
+
+    private WeatherRepository repository;
     private Settings settings;
 
-    private CityResolver cityResolver;
-
-    private Disposable textChangedSubscription;
-
     @Inject
-    public CityPresenter(@NonNull CityResolver cityResolver,
+    public CityPresenter(@NonNull WeatherRepository repository,
                          @NonNull Settings settings) {
-        this.cityResolver = cityResolver;
+        this.repository = repository;
         this.settings = settings;
     }
 
@@ -48,59 +41,56 @@ public class CityPresenter extends RxPresenter<CityView> {
         getViewState().showLoading();
         getViewState().hideKeyboard();
 
-        subscription = cityResolver.loadCityId(placeId)
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(@NonNull Long cityId) throws Exception {
-                        settings.setCityId(cityId);
-                        getViewState().hideProgressAndExit();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(@NonNull Throwable throwable) throws Exception {
-                        getViewState().showError();
-                        getViewState().hideLoading();
-                    }
+        Disposable subscription = repository.fetchCity(placeId)
+                .subscribe(cityId -> {
+                    settings.setCityId(cityId);
+                    settings.setFirstStart(false);
+                    getViewState().hideProgressAndExit();
+                }, throwable -> {
+                    getViewState().showError();
+                    getViewState().hideLoading();
                 });
+
+        subscriptions.add(subscription);
     }
 
-    public void onTextChanged(Observable<CharSequence> observable){
-        textChangedSubscription = observable
-                .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                .filter(new Predicate<CharSequence>() {
-                    @Override
-                    public boolean test(@NonNull CharSequence charSequence) throws Exception {
-                        return charSequence.length() > 0;
-                    }
-                }).map(new Function<CharSequence, String>() {
-
-                    @Override
-                    public String apply(@NonNull CharSequence charSequence) throws Exception {
-                        return charSequence.toString();
-                    }
-                }).subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(@NonNull String input) throws Exception {
-                        cityResolver.loadPredictions(input)
-                                .subscribe(new Consumer<List<SuggestionModel>>() {
-                                    @Override
-                                    public void accept(@NonNull List<SuggestionModel> suggestionModels) throws Exception {
-                                        getViewState().updateList(suggestionModels);
-                                    }
-                                }, new Consumer<Throwable>() {
-                                    @Override
-                                    public void accept(@NonNull Throwable throwable) throws Exception {
-                                        getViewState().showError();
-                                    }
-                                });
-                    }
-                });
+    public void onCityRemoved(@NonNull City city) {
+        repository.removeCachedCity(city)
+                .doOnSubscribe(disposable -> subscriptions.add(disposable))
+                .subscribe(city1 -> {
+                            if (city1.cityId() == settings.getCityId()) {
+                                settings.setFirstStart(true);
+                            }
+                            getViewState().showCityRemoved(city);
+                            repository.loadCachedCities()
+                                    .subscribe(cities -> {
+                                                getViewState().setCities(cities);
+                                            },
+                                            throwable -> getViewState().showError());
+                        },
+                        throwable -> getViewState().showError()
+                );
     }
 
-    public void onDestroyView(){
-        if(textChangedSubscription!=null){
-            textChangedSubscription.dispose();
-            textChangedSubscription = null;
-        }
+    public void onTextChanged(Observable<String> observable) {
+        observable.concatWith(textChangedSubject)
+                .doOnSubscribe(disposable -> subscriptions.add(disposable))
+                .subscribe(input -> {
+                    if (input.length() > 0) {
+                        repository.fetchPredictions(input)
+                                .subscribe(suggestionModels -> getViewState().setSuggestions(suggestionModels),
+                                        throwable -> getViewState().showError());
+                    } else {
+                        repository.loadCachedCities()
+                                .subscribe(cities -> getViewState().setCities(cities),
+                                        throwable -> getViewState().showError());
+                    }
+                }, throwable -> Timber.d(throwable, "Could not load cities"));
+    }
+
+    public void onCitySelected(@NonNull City city) {
+        settings.setCityId(city.cityId());
+        settings.setFirstStart(false);
+        getViewState().hideProgressAndExit();
     }
 }

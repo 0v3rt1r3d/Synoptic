@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Date" />
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/date" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toRightOf="@+id/weatherIcon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/date"
+            tools:text="Weather description"
+            tools:textSize="10sp" />
+
+        <ImageView
+            android:id="@+id/windDirectionIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/windSpeed"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:src="@drawable/ic_weather_wind_direction_east" />
+
+        <TextView
+            android:id="@+id/windSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@+id/humidity"
+            app:layout_constraintLeft_toRightOf="@+id/windIcon"
+            app:layout_constraintRight_toLeftOf="@+id/windDirectionIcon"
+            tools:text="Wind"
+            tools:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/clouds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@+id/humidity"
+            app:layout_constraintLeft_toRightOf="@+id/cloudsIcon"
+            app:layout_constraintRight_toLeftOf="@+id/pressureIcon"
+            tools:text="Clouds"
+            tools:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/humidityIcon"
+            app:layout_constraintRight_toLeftOf="@+id/cloudsIcon"
+            app:layout_constraintTop_toBottomOf="@+id/weatherIcon"
+            tools:text="Humidity"
+            tools:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@+id/humidity"
+            app:layout_constraintLeft_toRightOf="@+id/pressureIcon"
+            app:layout_constraintRight_toLeftOf="@+id/windIcon"
+            tools:text="Pressure"
+            tools:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/text_morning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="@string/forecast_text_morning"
+            app:layout_constraintBottom_toBottomOf="@+id/weatherIcon"
+            app:layout_constraintLeft_toLeftOf="@+id/temperatureMorning"
+            app:layout_constraintRight_toRightOf="@+id/temperatureMorning" />
+
+        <TextView
+            android:id="@+id/temperatureMorning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_morning"
+            app:layout_constraintLeft_toRightOf="@+id/weatherIcon"
+            app:layout_constraintRight_toLeftOf="@+id/temperatureDay"
+            tools:text="24"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <TextView
+            android:id="@+id/temperatureUnitsMorning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@id/temperatureMorning"
+            app:layout_constraintTop_toTopOf="@id/temperatureMorning"
+            tools:text="˚C" />
+
+        <TextView
+            android:id="@+id/text_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="@string/forecast_text_day"
+            app:layout_constraintBottom_toBottomOf="@+id/weatherIcon"
+            app:layout_constraintLeft_toLeftOf="@+id/temperatureDay"
+            app:layout_constraintRight_toRightOf="@+id/temperatureDay" />
+
+        <TextView
+            android:id="@+id/temperatureDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_day"
+            app:layout_constraintLeft_toRightOf="@+id/temperatureMorning"
+            app:layout_constraintRight_toLeftOf="@+id/temperatureEvening"
+            tools:text="25"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <TextView
+            android:id="@+id/temperatureUnitsDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@id/temperatureDay"
+            app:layout_constraintTop_toTopOf="@id/temperatureDay"
+            tools:text="˚C" />
+
+        <TextView
+            android:id="@+id/text_evening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/forecast_text_evening"
+            app:layout_constraintBottom_toBottomOf="@+id/weatherIcon"
+            app:layout_constraintLeft_toLeftOf="@+id/temperatureEvening"
+            app:layout_constraintRight_toRightOf="@+id/temperatureEvening" />
+
+        <TextView
+            android:id="@+id/temperatureEvening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_evening"
+            app:layout_constraintLeft_toRightOf="@+id/temperatureDay"
+            app:layout_constraintRight_toLeftOf="@+id/temperatureNight"
+            tools:text="26"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <TextView
+            android:id="@+id/temperatureUnitsEvening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@id/temperatureEvening"
+            app:layout_constraintTop_toTopOf="@id/temperatureEvening"
+            tools:text="˚C" />
+
+        <TextView
+            android:id="@+id/text_night"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="@string/forecast_text_night"
+            app:layout_constraintBottom_toBottomOf="@+id/weatherIcon"
+            app:layout_constraintLeft_toLeftOf="@+id/temperatureNight"
+            app:layout_constraintRight_toRightOf="@+id/temperatureNight" />
+
+        <TextView
+            android:id="@+id/temperatureNight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_night"
+            app:layout_constraintLeft_toRightOf="@+id/temperatureEvening"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="27"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <TextView
+            android:id="@+id/temperatureUnitsNight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toRightOf="@id/temperatureNight"
+            app:layout_constraintTop_toTopOf="@id/temperatureNight"
+            tools:text="˚C" />
+
+        <ImageView
+            android:id="@+id/humidityIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/humidity"
+            app:layout_constraintTop_toBottomOf="@+id/weatherIcon"
+            app:srcCompat="@drawable/ic_weather_humidity" />
+
+        <ImageView
+            android:id="@+id/pressureIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/clouds"
+            app:layout_constraintRight_toLeftOf="@+id/pressure"
+            app:srcCompat="@drawable/ic_weather_pressure" />
+
+        <ImageView
+            android:id="@+id/cloudsIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/humidity"
+            app:layout_constraintRight_toLeftOf="@+id/clouds"
+            app:srcCompat="@drawable/ic_weather_cloud" />
+
+        <ImageView
+            android:id="@+id/windIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/pressure"
+            app:layout_constraintRight_toLeftOf="@+id/windSpeed"
+            app:srcCompat="@drawable/ic_weather_wind" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="53dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
+

@@ -88,4 +88,14 @@ public class Settings {
                 .putLong(context.getString(R.string.pref_city_id),id)
                 .apply();
     }
+
+    public boolean isFirstStart(){
+        return preferences.getBoolean(context.getString(R.string.pref_first_start), true);
+    }
+
+    public void setFirstStart(boolean start){
+        preferences.edit()
+                .putBoolean(context.getString(R.string.pref_first_start),start)
+                .apply();
+    }
 }

@@ -1,13 +1,13 @@
 package ru.andrikeev.android.synoptic.ui.fragment.weather;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -16,31 +16,21 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import javax.inject.Inject;
 
 import ru.andrikeev.android.synoptic.R;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.presentation.presenter.weather.WeatherPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
-import ru.andrikeev.android.synoptic.ui.activity.city.CityActivity;
 import ru.andrikeev.android.synoptic.ui.fragment.BaseFragment;
 
 public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter> implements WeatherView {
 
-    public static final String EXTRA_LON = "extra_lon";
-    public static final String EXTRA_LAT = "extra_lat";
+    public static final String TAG = "ru.andrikeev.android.synoptic.ui.fragment.weather.WeatherFragment";
 
-    private static final int REQUEST_CITY = 0;
+    private ForecastAdapter adapter;
 
+    private RecyclerView recycler;
     private SwipeRefreshLayout refreshLayout;
-    private TextView cityName;
-    private TextView lastUpdate;
-    private ImageView weatherIcon;
-    private TextView temperature;
-    private TextView temperatureUnits;
-    private TextView description;
-    private TextView pressure;
-    private TextView humidity;
-    private TextView wind;
-    private ImageView windDirection;
-    private TextView clouds;
+
 
     @Inject
     @InjectPresenter
@@ -59,33 +49,20 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        cityName = view.findViewById(R.id.cityName);
-        lastUpdate = view.findViewById(R.id.lastUpdate);
-        weatherIcon = view.findViewById(R.id.weatherIcon);
-        temperature = view.findViewById(R.id.temperature);
-        temperatureUnits = view.findViewById(R.id.temperatureUnits);
-        description = view.findViewById(R.id.description);
-        pressure = view.findViewById(R.id.pressure);
-        humidity = view.findViewById(R.id.humidity);
-        wind = view.findViewById(R.id.wind);
-        windDirection = view.findViewById(R.id.windDirection);
-        clouds = view.findViewById(R.id.clouds);
-
-        cityName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = CityActivity.getIntent(getActivity());
-                startActivityForResult(intent, REQUEST_CITY);
-            }
-        });
 
         refreshLayout = view.findViewById(R.id.refreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.fetchWeather();
-            }
-        });
+        refreshLayout.setOnRefreshListener(() -> presenter.updateData());
+
+        adapter = new ForecastAdapter();
+        recycler = view.findViewById(R.id.recycler);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recycler.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onResume();
     }
 
     @Override
@@ -103,28 +80,31 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     }
 
     @Override
-    public void showWeather(WeatherModel model) {
-        cityName.setText(model.getCityName());
-        lastUpdate.setText(model.getDate());
-        weatherIcon.setImageResource(model.getWeatherIconId());
-        temperature.setText(model.getTemperature());
-        temperatureUnits.setText(model.getTemperatureUnits());
-        description.setText(model.getDescription());
-        pressure.setText(model.getPressure());
-        humidity.setText(model.getHumidity());
-        wind.setText(model.getWindSpeed());
-        windDirection.setImageResource(model.getWindDirectionIconId());
-        clouds.setText(model.getClouds());
+    public void setWeather(WeatherModel model) {
+        adapter.setWeather(model);
     }
 
     @Override
     public void showError() {
-        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show(); // TODO: show error
+        Toast.makeText(getActivity(), getString(R.string.danger_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showFetchingError() {
-        Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show(); // TODO: show error
+        Toast.makeText(getActivity(), getString(R.string.fetching_error), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setCity(@NonNull String city) {
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(city);
+    }
+
+    @Override
+    public void setForecast(@NonNull ForecastModel forecast) {
+        adapter.setForecast(forecast);
+        adapter.notifyDataSetChanged();
+        //adapter.notifyItemRangeChanged(0, forecast.items().size());
     }
 
     public static WeatherFragment create() {
@@ -135,9 +115,8 @@ public class WeatherFragment extends BaseFragment<WeatherView, WeatherPresenter>
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CITY && resultCode == Activity.RESULT_OK){
-            presenter.fetchWeather();
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 }

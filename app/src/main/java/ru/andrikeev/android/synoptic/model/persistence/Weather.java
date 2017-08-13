@@ -2,8 +2,11 @@ package ru.andrikeev.android.synoptic.model.persistence;
 
 import android.support.annotation.NonNull;
 
+import com.google.auto.value.AutoValue;
+
 import io.requery.Entity;
 import io.requery.Key;
+import io.requery.Persistable;
 import io.requery.Table;
 
 /**
@@ -11,146 +14,77 @@ import io.requery.Table;
  */
 @Entity
 @Table(name = "weather")
-public class Weather {
+@AutoValue
+public abstract class Weather implements Persistable{
 
     /**
      * Идентификатор погоды - совпадает с идентификатором города.
      */
     @Key
-    protected long cityId;
-
-    /**
-     * Название города.
-     */
-    protected String cityName;
+    public abstract long cityId();
 
     /**
      * Дата и время.
      */
-    protected long timestamp;
+    public abstract long timestamp();
 
     /**
      * Идентифиактор состояния погоды.
      */
-    protected int weatherId;
+    public abstract int weatherId();
 
     /**
      * Полное описание.
      */
-    protected String description;
+    public abstract String description();
 
     /**
      * Температура.
      */
-    protected float temperature;
+    public abstract float temperature();
 
     /**
      * Давление.
      */
-    protected float pressure;
+    public abstract float pressure();
 
     /**
      * Влажность.
      */
-    protected float humidity;
+    public abstract float humidity();
 
     /**
      * Скорость ветра.
      */
-    protected float windSpeed;
+    public abstract float windSpeed();
 
     /**
      * Направление (азимут) ветра.
      */
-    protected float windDegree;
+    public abstract float windDegree();
 
     /**
      * Облачность в процентах.
      */
-    protected float clouds;
+    public abstract float clouds();
 
-    public long getCityId() {
-        return cityId;
+    public static Builder builder() {
+        return new AutoValue_Weather.Builder();
     }
 
-    public String getCityName() {
-        return cityName;
-    }
+    @AutoValue.Builder
+    public abstract static class Builder{
+        public abstract Builder setCityId(long cityId);
+        public abstract Builder setTimestamp(long timestamp);
+        public abstract Builder setWeatherId(int weatherId);
+        public abstract Builder setDescription(String description);
+        public abstract Builder setTemperature(float temperature);
+        public abstract Builder setPressure(float pressure);
+        public abstract Builder setHumidity(float humidity);
+        public abstract Builder setWindSpeed(float windSpeed);
+        public abstract Builder setWindDegree(float windDegree);
+        public abstract Builder setClouds(float clouds);
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public int getWeatherId() {
-        return weatherId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public float getTemperature() {
-        return temperature;
-    }
-
-    public float getPressure() {
-        return pressure;
-    }
-
-    public float getHumidity() {
-        return humidity;
-    }
-
-    public float getWindSpeed() {
-        return windSpeed;
-    }
-
-    public float getWindDegree() {
-        return windDegree;
-    }
-
-    public float getClouds() {
-        return clouds;
-    }
-
-    protected Weather() {
-    }
-
-    protected Weather(@NonNull Weather weather) {
-        this.cityId = weather.getCityId();
-        this.cityName = weather.getCityName();
-        this.timestamp = weather.getTimestamp();
-        this.weatherId = weather.getWeatherId();
-        this.description = weather.getDescription();
-        this.temperature = weather.getTemperature();
-        this.pressure = weather.getPressure();
-        this.humidity = weather.getHumidity();
-        this.windSpeed = weather.getWindSpeed();
-        this.windDegree = weather.getWindDegree();
-        this.clouds = weather.getClouds();
-    }
-
-    public Weather(long cityId,
-                   @NonNull String cityName,
-                   long timestamp,
-                   int weatherId,
-                   @NonNull String description,
-                   float temperature,
-                   float pressure,
-                   float humidity,
-                   float windSpeed,
-                   float windDegree,
-                   float clouds) {
-        this.cityId = cityId;
-        this.cityName = cityName;
-        this.timestamp = timestamp;
-        this.weatherId = weatherId;
-        this.description = description;
-        this.temperature = temperature;
-        this.pressure = pressure;
-        this.humidity = humidity;
-        this.windSpeed = windSpeed;
-        this.windDegree = windDegree;
-        this.clouds = clouds;
+        public abstract Weather build();
     }
 }

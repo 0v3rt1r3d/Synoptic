@@ -5,6 +5,9 @@ import android.support.annotation.Nullable;
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.MvpView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -14,14 +17,15 @@ import io.reactivex.disposables.Disposable;
 public abstract class RxPresenter<View extends MvpView> extends MvpPresenter<View> {
 
     @Nullable
-    protected Disposable subscription;
+    protected List<Disposable> subscriptions = new ArrayList<>();
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (subscription != null) {
-            subscription.dispose();
-            subscription = null;
+        for (Disposable subscription:subscriptions) {
+            if (subscription != null) {
+                subscription.dispose();
+            }
         }
     }
 }

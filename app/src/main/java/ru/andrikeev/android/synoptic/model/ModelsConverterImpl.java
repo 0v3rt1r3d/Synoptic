@@ -3,7 +3,9 @@ package ru.andrikeev.android.synoptic.model;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -11,8 +13,16 @@ import javax.inject.Singleton;
 
 import ru.andrikeev.android.synoptic.R;
 import ru.andrikeev.android.synoptic.application.Settings;
+import ru.andrikeev.android.synoptic.model.data.DailyForecastItem;
+import ru.andrikeev.android.synoptic.model.data.DailyForecastModel;
+import ru.andrikeev.android.synoptic.model.data.ForecastItem;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
-import ru.andrikeev.android.synoptic.model.network.openweather.response.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.DailyForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.ForecastResponse;
+import ru.andrikeev.android.synoptic.model.network.openweather.response.weather.WeatherResponse;
+import ru.andrikeev.android.synoptic.model.persistence.DailyForecast;
+import ru.andrikeev.android.synoptic.model.persistence.Forecast;
 import ru.andrikeev.android.synoptic.model.persistence.Weather;
 import ru.andrikeev.android.synoptic.utils.DateUtils;
 import ru.andrikeev.android.synoptic.utils.UnitsUtils;
@@ -24,6 +34,8 @@ import ru.andrikeev.android.synoptic.utils.units.TemperatureUnits;
 @Singleton
 public class ModelsConverterImpl implements ModelsConverter {
 
+    private static final int DATE_FACTOR = 1000;
+
     private Settings settings;
 
     private Context context;
@@ -33,20 +45,6 @@ public class ModelsConverterImpl implements ModelsConverter {
                         @NonNull Context context) {
         this.settings = settings;
         this.context = context;
-    }
-
-    public WeatherModel toViewModel(@NonNull Weather weather) {
-        return new WeatherModel(weather.getCityName(),
-                DateUtils.formatDate(new Date(weather.getTimestamp())),
-                resolveWeatherIcon(weather.getWeatherId()),
-                weather.getDescription(),
-                getTemperatureString(weather.getTemperature()),
-                getTemperatureUnits(),
-                getPressureString(weather.getPressure()),
-                getHumidityString(weather.getHumidity()),
-                getWindString(weather.getWindSpeed()),
-                resolveWindDirection(weather.getWindDegree()),
-                getCloudsString(weather.getClouds()));
     }
 
     private static int resolveWindDirection(float windDegree) {
@@ -69,7 +67,7 @@ public class ModelsConverterImpl implements ModelsConverter {
         } else if (windDegree >= 348.75 && windDegree <= 360) {
             return R.drawable.ic_weather_wind_direction_north;
         } else {
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "Wrong wind degree %.3f", windDegree));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Wrong wind windDegree %.3f", windDegree));
         }
     }
 
@@ -116,6 +114,11 @@ public class ModelsConverterImpl implements ModelsConverter {
         return String.valueOf(UnitsUtils.formatTemperature(temperature, settings.getTempUnits()));
     }
 
+    private String getDateString(long timestamp){
+        return context.getString(R.string.weather_updated,
+                DateUtils.formatWeatherDate(new Date(timestamp)));
+    }
+
     private String getTemperatureUnits() {
         return context.getString(settings.getTempUnits() == TemperatureUnits.CELSIUS
                 ? R.string.pref_temp_units_celsius_sign
@@ -138,19 +141,158 @@ public class ModelsConverterImpl implements ModelsConverter {
         return context.getString(R.string.weather_clouds, UnitsUtils.round(clouds));
     }
 
-    public Weather toCacheModel(@NonNull WeatherResponse weatherResponse) {
-        return new Weather(
-                weatherResponse.getCityId(),
-                weatherResponse.getCity(),
-                weatherResponse.getDate() * 1000,
-                weatherResponse.getWeatherDescription().getId(),
-                weatherResponse.getWeatherDescription().getDescription(),
-                weatherResponse.getWeatherCondition().getTemperature(),
-                weatherResponse.getWeatherCondition().getPressure(),
-                weatherResponse.getWeatherCondition().getHumidity(),
-                weatherResponse.getWind().getSpeed(),
-                weatherResponse.getWind().getDegree(),
-                weatherResponse.getClouds().getPercents());
+    public WeatherModel toViewModel(@NonNull Weather weather) {
+        return WeatherModel.Builder()
+                .setDate(getDateString(weather.timestamp()))
+                .setWeatherIconId(resolveWeatherIcon(weather.weatherId()))
+                .setDescription(weather.description())
+                .setTemperature(getTemperatureString(weather.temperature()))
+                .setTemperatureUnits(getTemperatureUnits())
+                .setPressure(getPressureString(weather.pressure()))
+                .setHumidity(getHumidityString(weather.humidity()))
+                .setWindSpeed(getWindString(weather.windSpeed()))
+                .setWindDirectionIconId(resolveWindDirection(weather.windDegree()))
+                .setClouds(getCloudsString(weather.clouds()))
+                .build();
     }
 
+    public Weather toWeatherCacheModel(@NonNull WeatherResponse weatherResponse) {
+        return Weather.builder()
+                .setCityId(weatherResponse.cityId())
+                .setDescription(makeFirstCharUpper(weatherResponse.weatherDescription().get(0).description()))
+                .setTimestamp(weatherResponse.timestamp() * DATE_FACTOR)
+                .setWeatherId(weatherResponse.weatherDescription().get(0).id())
+                .setTemperature(weatherResponse.weatherCondition().temperature())
+                .setPressure(weatherResponse.weatherCondition().pressure())
+                .setHumidity(weatherResponse.weatherCondition().humidity())
+                .setWindSpeed(weatherResponse.wind().speed())
+                .setWindDegree(weatherResponse.wind().degree())
+                .setClouds(weatherResponse.clouds().percents())
+                .build();
+    }
+
+    @Override
+    public List<DailyForecast> toDailyForecastCacheModel(@NonNull DailyForecastResponse forecastResponse) {
+        List<DailyForecast> result = new ArrayList<>();
+
+        int cityId = forecastResponse.city().id();
+        float message = forecastResponse.message();
+        String cityName = forecastResponse.city().cityName();
+
+        for (ru.andrikeev.android.synoptic.model.network.openweather.response.dailyforecast.internal.DailyForecast dailyForecast
+                : forecastResponse.forecastList()) {
+            result.add(DailyForecast.builder()
+                    .setId(DailyForecast.NO_ID)
+                    .setMessage(message)
+                    .setCityId(cityId)
+                    .setCityName(cityName)
+                    .setTimestamp(dailyForecast.date() * DATE_FACTOR)
+                    .setDescription(dailyForecast.weather().get(0).description())
+                    .setClouds(dailyForecast.clouds())
+                    .setWindSpeed(dailyForecast.windSpeed())
+                    .setWindDegree(dailyForecast.windDegree())
+                    .setPressure(dailyForecast.pressure())
+                    .setHumidity(dailyForecast.humidity())
+                    .setTempDay(dailyForecast.temp().tempDay())
+                    .setTempNight(dailyForecast.temp().tempNight())
+                    .setTempMorning(dailyForecast.temp().tempMorning())
+                    .setTempEvening(dailyForecast.temp().tempEvening())
+                    .setWeatherIconId(dailyForecast.weather().get(0).id())
+                    .build());
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<Forecast> toForecastCacheModel(@NonNull ForecastResponse forecastResponse) {
+        int cityId = forecastResponse.city().id();
+        float message = forecastResponse.message();
+        String cityName = forecastResponse.city().cityName();
+
+        List<Forecast> list = new ArrayList<>();
+
+        for (ru.andrikeev.android.synoptic.model.network.openweather.response.forecast.Forecast forecast
+                : forecastResponse.forecastsList()) {
+            list.add(Forecast.builder()
+                    .setId(Forecast.NO_ID)
+                    .setMessage(message)
+                    .setCityName(cityName)
+                    .setCityId(cityId)
+                    .setTimestamp(forecast.date() * DATE_FACTOR)
+                    .setWeatherIconId(forecast.weather().get(0).id())
+                    .setDescription(forecast.weather().get(0).description())
+                    .setClouds(forecast.clouds().percents())
+                    .setWindSpeed(forecast.wind().speed())
+                    .setWindDegree(forecast.wind().degree())
+                    .setTemperature(forecast.condition().temperature())
+                    .setPressure(forecast.condition().pressure())
+                    .setHumidity(forecast.condition().humidity())
+                    .build());
+        }
+
+        return list;
+    }
+
+    @Override
+    public DailyForecastModel toDailyForecastViewModel(@NonNull List<DailyForecast> dailyForecastList) {
+        DailyForecast first = dailyForecastList.get(0);
+        long cityId = first.cityId();
+        String cityName = first.cityName();
+        float message = first.message();
+
+        List<DailyForecastItem> items = new ArrayList<>();
+
+        for (DailyForecast forecast : dailyForecastList) {
+            items.add(DailyForecastItem.create(
+                    resolveWindDirection(forecast.windDegree()),
+                    resolveWeatherIcon(forecast.weatherIconId()),
+                    DateUtils.formatDailyForecastDate(new Date(forecast.timestamp())),
+                    getTemperatureString(forecast.tempDay()),
+                    getTemperatureString(forecast.tempNight()),
+                    getTemperatureString(forecast.tempEvening()),
+                    getTemperatureString(forecast.tempMorning()),
+                    getTemperatureUnits(),
+                    makeFirstCharUpper(forecast.description()),
+                    getPressureString(forecast.pressure()),
+                    getHumidityString(forecast.humidity()),
+                    getWindString(forecast.windSpeed()),
+                    getCloudsString(forecast.clouds())
+            ));
+        }
+
+        return DailyForecastModel.create(cityName,cityId,message,items);
+    }
+
+    @Override
+    public ForecastModel toForecastViewModel(@NonNull List<Forecast> forecastEntities) {
+        Forecast first = forecastEntities.get(0);
+        long cityId = first.cityId();
+        String cityName = first.cityName();
+
+        List<ForecastItem> items = new ArrayList<>();
+
+        for (Forecast forecast : forecastEntities) {
+            items.add(ForecastItem.create(
+                    resolveWeatherIcon(forecast.weatherIconId()),
+                    DateUtils.formatForecastDate(new Date(forecast.timestamp())),
+                    makeFirstCharUpper(forecast.description()),
+                    getCloudsString(forecast.clouds()),
+                    getWindString(forecast.windSpeed()),
+                    getTemperatureString(forecast.temperature()),
+                    getTemperatureUnits(),
+                    getPressureString(forecast.pressure()),
+                    getHumidityString(forecast.humidity()),
+                    resolveWindDirection(forecast.windDegree())
+            ));
+        }
+
+        return ForecastModel.create(cityId, cityName, items);
+    }
+
+    @NonNull
+    private String makeFirstCharUpper(@NonNull String text){
+        String f = text.substring(0,1).toUpperCase();
+        return f.concat(text.substring(1));
+    }
 }

@@ -6,14 +6,16 @@ import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import ru.andrikeev.android.synoptic.application.Settings;
+import ru.andrikeev.android.synoptic.model.data.ForecastModel;
 import ru.andrikeev.android.synoptic.model.data.WeatherModel;
 import ru.andrikeev.android.synoptic.model.repository.Resource;
 import ru.andrikeev.android.synoptic.model.repository.WeatherRepository;
 import ru.andrikeev.android.synoptic.presentation.presenter.RxPresenter;
 import ru.andrikeev.android.synoptic.presentation.view.WeatherView;
+import timber.log.Timber;
 
 /**
  * Presenter for {@link WeatherView} with
@@ -29,14 +31,15 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
         this.repository = repository;
     }
 
-    private void loadWeather() {
+    private void loadWeatherAndForecasts() {
         getViewState().showLoading();
+
         repository.loadWeather()
                 .subscribe(
                         new Observer<Resource<WeatherModel>>() {
                             @Override
                             public void onSubscribe(Disposable disposable) {
-                                subscription = disposable;
+                                subscriptions.add(disposable);
                             }
 
                             @Override
@@ -44,10 +47,11 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                                 switch (resource.getStatus()) {
                                     case SUCCESS:
                                         getViewState().hideLoading();
-                                        getViewState().showWeather(resource.getData());
+                                        getViewState().setWeather(resource.getData());
+                                        loadCity();
                                         break;
                                     case FETCHING:
-                                        getViewState().showWeather(resource.getData());
+                                        getViewState().setWeather(resource.getData());
                                         break;
                                     case ERROR:
                                         getViewState().showFetchingError();
@@ -66,6 +70,38 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
                             }
                         }
                 );
+        repository.loadForecasts()
+                .subscribe(new Observer<Resource<ForecastModel>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        subscriptions.add(d);
+                    }
+
+                    @Override
+                    public void onNext(Resource<ForecastModel> forecastModelResource) {
+                        switch (forecastModelResource.getStatus()){
+                            case SUCCESS:
+                                getViewState().hideLoading();
+                                getViewState().setForecast(forecastModelResource.getData());
+                                break;
+
+                            case ERROR:
+                                getViewState().hideLoading();
+                                getViewState().showFetchingError();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.d(e,"Forecast was not loaded");
+                        getViewState().hideLoading();
+                        getViewState().showError();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     public void fetchWeather() {
@@ -73,14 +109,27 @@ public class WeatherPresenter extends RxPresenter<WeatherView> {
         repository.fetchWeather();
     }
 
-    public void fetchWeather(double lon, double lat){
-        getViewState().showLoading();
-        repository.fetchWeather(lon, lat);
-    }
-
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        loadWeather();
+        loadWeatherAndForecasts();
+    }
+
+    public void fetchForecast(){
+        repository.fetchForecast();
+    }
+
+    private void loadCity(){
+        repository.loadCity().subscribe(name -> getViewState().setCity(name));
+    }
+
+    public void onResume(){
+        loadWeatherAndForecasts();
+        loadCity();
+    }
+
+    public void updateData(){
+        fetchWeather();
+        fetchForecast();
     }
 }

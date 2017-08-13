@@ -23,6 +23,8 @@ import ru.andrikeev.android.synoptic.ui.activity.BaseActivity;
 
 public class CityActivity extends BaseActivity implements HasSupportFragmentInjector {
 
+    private static final String IS_FIRST_START = "ru.andrikeev.android.synoptic.ui.activity.city.is_first_start";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +34,7 @@ public class CityActivity extends BaseActivity implements HasSupportFragmentInje
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        if (actionBar != null && !settings.isFirstStart()) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -46,7 +48,9 @@ public class CityActivity extends BaseActivity implements HasSupportFragmentInje
     }
 
 
-    public static Intent getIntent(@NonNull Context context){
-        return new Intent(context,CityActivity.class);
+    public static Intent getIntent(@NonNull Context context, boolean isFirstStart){
+        Intent intent = new Intent(context,CityActivity.class);
+        intent.putExtra(IS_FIRST_START,isFirstStart);
+        return intent;
     }
 }

@@ -35,4 +35,15 @@
     <string name="pref_header_sync">Синхронизация</string>
     <string name="pref_header_units">Единицы измерения</string>
     <string name="city_activity_title">Выберете город</string>
+    <string name="main_nav_forecast">Прогноз</string>
+    <string name="main_nav_daily_forecast">Прогноз на неделю</string>
+    <string name="menu_nav_weather">Погода</string>
+    <string name="forecast_text_day">День</string>
+    <string name="forecast_text_evening">Вечер</string>
+    <string name="forecast_text_morning">Утро</string>
+    <string name="forecast_text_night">Ночь</string>
+    <string name="weather_updated">"Обновлено: %1$s"</string>
+    <string name="city_removed">Город был удален</string>
+    <string name="danger_error">Произошла ошибка</string>
+    <string name="fetching_error">Произошла ошибка соединения</string>
 </resources>
